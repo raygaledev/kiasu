@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studyLists StudyList[]
+
+  @@map("users")
+}
+
+model StudyList {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  slug        String
+  isPublic    Boolean  @default(true)
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items StudyItem[]
+
+  @@unique([userId, slug])
+  @@index([userId])
+  @@map("study_lists")
+}
+
+model StudyItem {
+  id          String   @id @default(uuid())
+  title       String
+  notes       String?
+  url         String?
+  completed   Boolean  @default(false)
+  position    Int      @default(0)
+  studyListId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  studyList StudyList @relation(fields: [studyListId], references: [id], onDelete: Cascade)
+
+  @@index([studyListId])
+  @@map("study_items")
+}
