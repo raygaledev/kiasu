@@ -1,7 +1,10 @@
 "use client";
 
 import { Button, Spinner } from "@/components/ui";
-import { updateStudyList, deleteStudyList } from "@/app/(app)/dashboard/actions";
+import {
+  updateStudyList,
+  deleteStudyList,
+} from "@/app/(app)/dashboard/actions";
 import { X, Trash2 } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 import { toast } from "sonner";
@@ -102,7 +105,10 @@ export function EditStudyListModal({
               />
             </div>
             <div>
-              <label htmlFor="edit-description" className="block text-sm font-medium">
+              <label
+                htmlFor="edit-description"
+                className="block text-sm font-medium"
+              >
                 Description (optional)
               </label>
               <textarea
@@ -149,7 +155,11 @@ export function EditStudyListModal({
             <div className="flex items-center justify-between">
               <button
                 type="button"
-                onClick={() => list._count.items > 0 ? setConfirmDelete(true) : handleDelete()}
+                onClick={() =>
+                  list._count.items > 0
+                    ? setConfirmDelete(true)
+                    : handleDelete()
+                }
                 disabled={isBusy}
                 className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50 disabled:pointer-events-none"
               >
@@ -157,7 +167,12 @@ export function EditStudyListModal({
                 Delete
               </button>
               <div className="flex gap-3">
-                <Button type="button" variant="ghost" onClick={handleClose} disabled={isBusy}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={handleClose}
+                  disabled={isBusy}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isBusy}>

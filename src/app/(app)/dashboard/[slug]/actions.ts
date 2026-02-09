@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 export async function createStudyItem(
   studyListId: string,
   slug: string,
-  formData: FormData
+  formData: FormData,
 ) {
   const supabase = await createClient();
   const {
@@ -56,10 +56,7 @@ export async function createStudyItem(
   return { success: true };
 }
 
-export async function toggleStudyItem(
-  itemId: string,
-  slug: string
-) {
+export async function toggleStudyItem(itemId: string, slug: string) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -88,10 +85,7 @@ export async function toggleStudyItem(
   return { success: true };
 }
 
-export async function deleteStudyItem(
-  itemId: string,
-  slug: string
-) {
+export async function deleteStudyItem(itemId: string, slug: string) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -120,7 +114,7 @@ export async function deleteStudyItem(
 export async function updateStudyItem(
   itemId: string,
   slug: string,
-  formData: FormData
+  formData: FormData,
 ) {
   const supabase = await createClient();
   const {

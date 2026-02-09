@@ -34,7 +34,7 @@ export function Avatar({ src, name, size = "md", className }: AvatarProps) {
       className={cn(
         "flex items-center justify-center rounded-full bg-primary text-primary-foreground font-medium",
         sizeStyles[size],
-        className
+        className,
       )}
     >
       {name ? getInitials(name) : "?"}

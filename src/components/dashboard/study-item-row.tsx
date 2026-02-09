@@ -2,7 +2,10 @@
 
 import { Spinner } from "@/components/ui";
 import { EditItemModal } from "./edit-item-modal";
-import { toggleStudyItem, deleteStudyItem } from "@/app/(app)/dashboard/[slug]/actions";
+import {
+  toggleStudyItem,
+  deleteStudyItem,
+} from "@/app/(app)/dashboard/[slug]/actions";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -48,14 +51,26 @@ export function StudyItemRow({ item, slug }: StudyItemRowProps) {
           {toggling ? (
             <Spinner className="h-3 w-3" />
           ) : item.completed ? (
-            <svg className="h-3 w-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            <svg
+              className="h-3 w-3 text-primary-foreground"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={3}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           ) : null}
         </button>
 
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-medium ${item.completed ? "line-through text-muted-foreground" : ""}`}>
+          <p
+            className={`text-sm font-medium ${item.completed ? "line-through text-muted-foreground" : ""}`}
+          >
             {item.title}
           </p>
           {item.notes && (
@@ -89,7 +104,11 @@ export function StudyItemRow({ item, slug }: StudyItemRowProps) {
             disabled={isBusy}
             className="cursor-pointer rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-destructive transition-colors disabled:opacity-50 disabled:pointer-events-none"
           >
-            {deleting ? <Spinner className="h-4 w-4" /> : <Trash2 className="h-4 w-4" />}
+            {deleting ? (
+              <Spinner className="h-4 w-4" />
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>

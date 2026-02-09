@@ -12,8 +12,7 @@ const features = [
   {
     icon: CheckSquare,
     title: "Track Progress",
-    description:
-      "Mark items as completed and see your progress at a glance.",
+    description: "Mark items as completed and see your progress at a glance.",
   },
   {
     icon: Share2,
@@ -36,8 +35,7 @@ export default function HomePage() {
       <section className="py-20 sm:py-32">
         <Container className="text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-            Study smarter,{" "}
-            <span className="text-primary">not harder</span>
+            Study smarter, <span className="text-primary">not harder</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
             Kiasu helps you create, organize, and share study lists so you never

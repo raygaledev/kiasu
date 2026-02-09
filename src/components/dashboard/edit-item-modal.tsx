@@ -64,7 +64,10 @@ export function EditItemModal({
         <form ref={formRef} onSubmit={handleSubmit} className="mt-4 space-y-4">
           <fieldset disabled={loading} className="space-y-4">
             <div>
-              <label htmlFor="edit-item-title" className="block text-sm font-medium">
+              <label
+                htmlFor="edit-item-title"
+                className="block text-sm font-medium"
+              >
                 Title
               </label>
               <input
@@ -78,7 +81,10 @@ export function EditItemModal({
               />
             </div>
             <div>
-              <label htmlFor="edit-item-url" className="block text-sm font-medium">
+              <label
+                htmlFor="edit-item-url"
+                className="block text-sm font-medium"
+              >
                 URL (optional)
               </label>
               <input
@@ -91,7 +97,10 @@ export function EditItemModal({
               />
             </div>
             <div>
-              <label htmlFor="edit-item-notes" className="block text-sm font-medium">
+              <label
+                htmlFor="edit-item-notes"
+                className="block text-sm font-medium"
+              >
                 Notes (optional)
               </label>
               <textarea
@@ -105,7 +114,12 @@ export function EditItemModal({
             </div>
           </fieldset>
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="ghost" onClick={onClose} disabled={loading}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onClose}
+              disabled={loading}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>

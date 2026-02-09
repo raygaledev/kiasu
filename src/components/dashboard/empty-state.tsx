@@ -16,7 +16,8 @@ export function EmptyState() {
         </div>
         <h3 className="mt-4 text-lg font-semibold">No study lists yet</h3>
         <p className="mt-2 max-w-sm text-center text-sm text-muted-foreground">
-          Create your first study list to start organizing your learning journey.
+          Create your first study list to start organizing your learning
+          journey.
         </p>
         <Button className="mt-6" onClick={() => setModalOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />

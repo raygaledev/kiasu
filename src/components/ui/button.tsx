@@ -1,7 +1,12 @@
 import { cn } from "@/lib/utils";
 import { type ButtonHTMLAttributes, forwardRef } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "destructive";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "destructive";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -10,15 +15,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary:
-    "bg-primary text-primary-foreground hover:bg-primary-hover",
-  secondary:
-    "bg-secondary text-secondary-foreground hover:opacity-90",
-  outline:
-    "border border-border bg-transparent hover:bg-muted text-foreground",
+  primary: "bg-primary text-primary-foreground hover:bg-primary-hover",
+  secondary: "bg-secondary text-secondary-foreground hover:opacity-90",
+  outline: "border border-border bg-transparent hover:bg-muted text-foreground",
   ghost: "bg-transparent hover:bg-muted text-foreground",
-  destructive:
-    "bg-destructive text-destructive-foreground hover:opacity-90",
+  destructive: "bg-destructive text-destructive-foreground hover:opacity-90",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -28,7 +29,10 @@ const sizeStyles: Record<ButtonSize, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", disabled, ...props }, ref) => {
+  (
+    { className, variant = "primary", size = "md", disabled, ...props },
+    ref,
+  ) => {
     return (
       <button
         ref={ref}
@@ -36,12 +40,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           "inline-flex cursor-pointer items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
           variantStyles[variant],
           sizeStyles[size],
-          className
+          className,
         )}
         disabled={disabled}
         {...props}
       />
     );
-  }
+  },
 );
 Button.displayName = "Button";

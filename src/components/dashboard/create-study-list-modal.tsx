@@ -74,7 +74,10 @@ export function CreateStudyListModal({
               />
             </div>
             <div>
-              <label htmlFor="description" className="block text-sm font-medium">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium"
+              >
                 Description (optional)
               </label>
               <textarea
@@ -87,7 +90,12 @@ export function CreateStudyListModal({
             </div>
           </fieldset>
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="ghost" onClick={onClose} disabled={loading}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onClose}
+              disabled={loading}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
