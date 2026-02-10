@@ -1,9 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma/client";
 import { Container } from "@/components/ui";
-import { StudyListHeader } from "@/components/dashboard/study-list-header";
-import { StudyItemRow } from "@/components/dashboard/study-item-row";
-import { ItemsEmptyState } from "@/components/dashboard/items-empty-state";
+import { StudyItemList } from "@/components/dashboard/study-item-list";
 import { notFound } from "next/navigation";
 
 export default async function StudyListPage({
@@ -31,24 +29,13 @@ export default async function StudyListPage({
 
   return (
     <Container as="section" className="py-8">
-      <StudyListHeader
-        title={studyList.title}
-        description={studyList.description}
+      <StudyItemList
+        items={studyList.items}
         studyListId={studyList.id}
         slug={slug}
+        title={studyList.title}
+        description={studyList.description}
       />
-
-      <div className="mt-8">
-        {studyList.items.length === 0 ? (
-          <ItemsEmptyState studyListId={studyList.id} slug={slug} />
-        ) : (
-          <div className="space-y-2">
-            {studyList.items.map((item) => (
-              <StudyItemRow key={item.id} item={item} slug={slug} />
-            ))}
-          </div>
-        )}
-      </div>
     </Container>
   );
 }

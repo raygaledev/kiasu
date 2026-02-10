@@ -5,18 +5,26 @@ import { EditStudyListModal } from "./edit-study-list-modal";
 import { BookOpen, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import type { StudyListWithItemCount } from "@/types";
+import type { OptimisticStudyListWithItemCount } from "@/types";
+import { cn } from "@/lib/utils";
 
 interface StudyListCardProps {
-  list: StudyListWithItemCount;
+  list: OptimisticStudyListWithItemCount;
+  onEdit: (formData: FormData) => void;
+  onDelete: () => void;
 }
 
-export function StudyListCard({ list }: StudyListCardProps) {
+export function StudyListCard({ list, onEdit, onDelete }: StudyListCardProps) {
   const [editOpen, setEditOpen] = useState(false);
 
   return (
     <>
-      <Card className="transition-shadow hover:shadow-md">
+      <Card
+        className={cn(
+          "transition-shadow hover:shadow-md",
+          list.pending && "opacity-70 pointer-events-none",
+        )}
+      >
         <div className="flex items-start justify-between">
           <Link
             href={`/dashboard/${list.slug}`}
@@ -48,6 +56,8 @@ export function StudyListCard({ list }: StudyListCardProps) {
         open={editOpen}
         onClose={() => setEditOpen(false)}
         list={list}
+        onSubmit={onEdit}
+        onDelete={onDelete}
       />
     </>
   );

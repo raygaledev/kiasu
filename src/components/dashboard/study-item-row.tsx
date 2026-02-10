@@ -1,56 +1,40 @@
 "use client";
 
-import { Spinner } from "@/components/ui";
 import { EditItemModal } from "./edit-item-modal";
-import {
-  toggleStudyItem,
-  deleteStudyItem,
-} from "@/app/(app)/dashboard/[slug]/actions";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
-import type { StudyItem } from "@/types";
+import type { OptimisticStudyItem } from "@/types";
+import { cn } from "@/lib/utils";
 
 interface StudyItemRowProps {
-  item: StudyItem;
-  slug: string;
+  item: OptimisticStudyItem;
+  onToggle: () => void;
+  onDelete: () => void;
+  onEdit: (formData: FormData) => void;
 }
 
-export function StudyItemRow({ item, slug }: StudyItemRowProps) {
-  const [toggling, setToggling] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+export function StudyItemRow({
+  item,
+  onToggle,
+  onDelete,
+  onEdit,
+}: StudyItemRowProps) {
   const [editOpen, setEditOpen] = useState(false);
-
-  const isBusy = toggling || deleting;
-
-  const handleToggle = async () => {
-    setToggling(true);
-    const result = await toggleStudyItem(item.id, slug);
-    if (result.error) toast.error(result.error);
-    setToggling(false);
-  };
-
-  const handleDelete = async () => {
-    setDeleting(true);
-    const result = await deleteStudyItem(item.id, slug);
-    if (result.error) {
-      toast.error(result.error);
-      setDeleting(false);
-    }
-  };
 
   return (
     <>
-      <div className="flex items-center gap-3 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50">
+      <div
+        className={cn(
+          "flex items-center gap-3 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50",
+          item.pending && "opacity-70 pointer-events-none",
+        )}
+      >
         <button
-          onClick={handleToggle}
-          disabled={isBusy}
-          className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded border border-border transition-colors disabled:opacity-50 data-[checked=true]:border-primary data-[checked=true]:bg-primary"
+          onClick={onToggle}
+          className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded border border-border transition-colors data-[checked=true]:border-primary data-[checked=true]:bg-primary"
           data-checked={item.completed}
         >
-          {toggling ? (
-            <Spinner className="h-3 w-3" />
-          ) : item.completed ? (
+          {item.completed ? (
             <svg
               className="h-3 w-3 text-primary-foreground"
               fill="none"
@@ -94,21 +78,15 @@ export function StudyItemRow({ item, slug }: StudyItemRowProps) {
           )}
           <button
             onClick={() => setEditOpen(true)}
-            disabled={isBusy}
-            className="cursor-pointer rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 disabled:pointer-events-none"
+            className="cursor-pointer rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <Pencil className="h-4 w-4" />
           </button>
           <button
-            onClick={handleDelete}
-            disabled={isBusy}
-            className="cursor-pointer rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-destructive transition-colors disabled:opacity-50 disabled:pointer-events-none"
+            onClick={onDelete}
+            className="cursor-pointer rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-destructive transition-colors"
           >
-            {deleting ? (
-              <Spinner className="h-4 w-4" />
-            ) : (
-              <Trash2 className="h-4 w-4" />
-            )}
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -117,7 +95,7 @@ export function StudyItemRow({ item, slug }: StudyItemRowProps) {
         open={editOpen}
         onClose={() => setEditOpen(false)}
         item={item}
-        slug={slug}
+        onSubmit={onEdit}
       />
     </>
   );

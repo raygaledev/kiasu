@@ -1,68 +1,50 @@
 "use client";
 
-import { Button, Spinner } from "@/components/ui";
-import { updateStudyItem } from "@/app/(app)/dashboard/[slug]/actions";
+import { Button } from "@/components/ui";
 import { X } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
-import { toast } from "sonner";
+import { type FormEvent } from "react";
 import type { StudyItem } from "@/types";
 
 interface EditItemModalProps {
   open: boolean;
   onClose: () => void;
   item: StudyItem;
-  slug: string;
+  onSubmit: (formData: FormData) => void;
 }
 
 export function EditItemModal({
   open,
   onClose,
   item,
-  slug,
+  onSubmit,
 }: EditItemModalProps) {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [loading, setLoading] = useState(false);
-
   if (!open) return null;
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-
     const formData = new FormData(e.currentTarget);
-    const result = await updateStudyItem(item.id, slug, formData);
-
-    if (result.error) {
-      toast.error(result.error);
-      setLoading(false);
-      return;
-    }
-
-    toast.success("Item updated!");
-    setLoading(false);
+    const title = (formData.get("title") as string)?.trim();
+    if (!title) return;
+    onSubmit(formData);
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={loading ? undefined : onClose}
-      />
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative w-full max-w-md rounded-xl border border-border bg-background p-6 shadow-lg">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Edit item</h2>
           <button
             onClick={onClose}
-            disabled={loading}
-            className="cursor-pointer rounded-lg p-1 hover:bg-muted transition-colors disabled:opacity-50 disabled:pointer-events-none"
+            className="cursor-pointer rounded-lg p-1 hover:bg-muted transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <form ref={formRef} onSubmit={handleSubmit} className="mt-4 space-y-4">
-          <fieldset disabled={loading} className="space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+          <div className="space-y-4">
             <div>
               <label
                 htmlFor="edit-item-title"
@@ -77,7 +59,7 @@ export function EditItemModal({
                 required
                 autoFocus
                 defaultValue={item.title}
-                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
             <div>
@@ -92,7 +74,7 @@ export function EditItemModal({
                 name="url"
                 type="url"
                 defaultValue={item.url ?? ""}
-                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 placeholder="https://..."
               />
             </div>
@@ -108,24 +90,16 @@ export function EditItemModal({
                 name="notes"
                 rows={3}
                 defaultValue={item.notes ?? ""}
-                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none disabled:opacity-50"
+                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
                 placeholder="Any extra notes..."
               />
             </div>
-          </fieldset>
+          </div>
           <div className="flex justify-end gap-3">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={onClose}
-              disabled={loading}
-            >
+            <Button type="button" variant="ghost" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
-              {loading && <Spinner className="mr-2" />}
-              {loading ? "Saving..." : "Save"}
-            </Button>
+            <Button type="submit">Save</Button>
           </div>
         </form>
       </div>

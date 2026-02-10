@@ -1,65 +1,40 @@
 "use client";
 
-import { Button, Spinner } from "@/components/ui";
-import {
-  updateStudyList,
-  deleteStudyList,
-} from "@/app/(app)/dashboard/actions";
+import { Button } from "@/components/ui";
 import { X, Trash2 } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
-import { toast } from "sonner";
+import { useState, type FormEvent } from "react";
 import type { StudyListWithItemCount } from "@/types";
 
 interface EditStudyListModalProps {
   open: boolean;
   onClose: () => void;
   list: StudyListWithItemCount;
+  onSubmit: (formData: FormData) => void;
+  onDelete: () => void;
 }
 
 export function EditStudyListModal({
   open,
   onClose,
   list,
+  onSubmit,
+  onDelete,
 }: EditStudyListModalProps) {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [loading, setLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
   if (!open) return null;
 
-  const isBusy = loading || deleting;
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-
     const formData = new FormData(e.currentTarget);
-    const result = await updateStudyList(formData);
-
-    if (result.error) {
-      toast.error(result.error);
-      setLoading(false);
-      return;
-    }
-
-    toast.success("Study list updated!");
-    setLoading(false);
+    const title = (formData.get("title") as string)?.trim();
+    if (!title) return;
+    onSubmit(formData);
     onClose();
   };
 
-  const handleDelete = async () => {
-    setDeleting(true);
-    const result = await deleteStudyList(list.id);
-
-    if (result.error) {
-      toast.error(result.error);
-      setDeleting(false);
-      return;
-    }
-
-    toast.success("Study list deleted");
-    setDeleting(false);
+  const handleDelete = () => {
+    onDelete();
     setConfirmDelete(false);
     onClose();
   };
@@ -71,25 +46,21 @@ export function EditStudyListModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={isBusy ? undefined : handleClose}
-      />
+      <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
       <div className="relative w-full max-w-md rounded-xl border border-border bg-background p-6 shadow-lg">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Edit study list</h2>
           <button
             onClick={handleClose}
-            disabled={isBusy}
-            className="cursor-pointer rounded-lg p-1 hover:bg-muted transition-colors disabled:opacity-50 disabled:pointer-events-none"
+            className="cursor-pointer rounded-lg p-1 hover:bg-muted transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <form ref={formRef} onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <input type="hidden" name="id" value={list.id} />
-          <fieldset disabled={isBusy} className="space-y-4">
+          <div className="space-y-4">
             <div>
               <label htmlFor="edit-title" className="block text-sm font-medium">
                 Title
@@ -101,7 +72,7 @@ export function EditStudyListModal({
                 required
                 autoFocus
                 defaultValue={list.title}
-                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
             <div>
@@ -116,11 +87,11 @@ export function EditStudyListModal({
                 name="description"
                 rows={3}
                 defaultValue={list.description ?? ""}
-                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none disabled:opacity-50"
+                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
                 placeholder="What is this study list about?"
               />
             </div>
-          </fieldset>
+          </div>
           {confirmDelete ? (
             <div className="space-y-3 rounded-lg border border-destructive/20 bg-destructive/5 p-3">
               <p className="text-sm text-destructive">
@@ -135,7 +106,6 @@ export function EditStudyListModal({
                   variant="ghost"
                   size="sm"
                   onClick={() => setConfirmDelete(false)}
-                  disabled={deleting}
                 >
                   Cancel
                 </Button>
@@ -144,10 +114,8 @@ export function EditStudyListModal({
                   variant="destructive"
                   size="sm"
                   onClick={handleDelete}
-                  disabled={deleting}
                 >
-                  {deleting && <Spinner className="mr-2" />}
-                  {deleting ? "Deleting..." : "Yes, delete"}
+                  Yes, delete
                 </Button>
               </div>
             </div>
@@ -160,25 +128,16 @@ export function EditStudyListModal({
                     ? setConfirmDelete(true)
                     : handleDelete()
                 }
-                disabled={isBusy}
-                className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground hover:text-destructive transition-colors"
               >
                 <Trash2 className="h-4 w-4" />
                 Delete
               </button>
               <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={handleClose}
-                  disabled={isBusy}
-                >
+                <Button type="button" variant="ghost" onClick={handleClose}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isBusy}>
-                  {loading && <Spinner className="mr-2" />}
-                  {loading ? "Saving..." : "Save"}
-                </Button>
+                <Button type="submit">Save</Button>
               </div>
             </div>
           )}

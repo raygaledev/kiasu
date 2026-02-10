@@ -35,3 +35,20 @@ export interface StudyListWithItemCount extends StudyList {
     items: number;
   };
 }
+
+export type OptimisticStudyItem = StudyItem & { pending?: boolean };
+
+export type OptimisticStudyListWithItemCount = StudyListWithItemCount & {
+  pending?: boolean;
+};
+
+export type StudyItemAction =
+  | { type: "create"; item: OptimisticStudyItem }
+  | { type: "toggle"; itemId: string }
+  | { type: "delete"; itemId: string }
+  | { type: "update"; itemId: string; data: Partial<StudyItem> };
+
+export type StudyListAction =
+  | { type: "create"; list: OptimisticStudyListWithItemCount }
+  | { type: "update"; listId: string; data: Partial<StudyList> }
+  | { type: "delete"; listId: string };
