@@ -108,6 +108,46 @@ describe("createStudyList", () => {
     });
   });
 
+  it("creates a public list when isPublic is true", async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findUnique.mockResolvedValue(null);
+    mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
+
+    await createStudyList(
+      createFormData({ title: "Test", isPublic: "true" }),
+    );
+
+    expect(mockPrisma.studyList.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ isPublic: true }),
+    });
+  });
+
+  it("creates a private list when isPublic is false", async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findUnique.mockResolvedValue(null);
+    mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
+
+    await createStudyList(
+      createFormData({ title: "Test", isPublic: "false" }),
+    );
+
+    expect(mockPrisma.studyList.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ isPublic: false }),
+    });
+  });
+
+  it("defaults to private when isPublic is not provided", async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findUnique.mockResolvedValue(null);
+    mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
+
+    await createStudyList(createFormData({ title: "Test" }));
+
+    expect(mockPrisma.studyList.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ isPublic: false }),
+    });
+  });
+
   it("calls revalidatePath for /dashboard", async () => {
     mockAuthenticated();
     mockPrisma.studyList.findUnique.mockResolvedValue(null);
@@ -192,6 +232,45 @@ describe("updateStudyList", () => {
       data: expect.objectContaining({
         slug: "new-title",
       }),
+    });
+  });
+
+  it("updates isPublic to false", async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findFirst.mockResolvedValue(TEST_STUDY_LIST);
+    mockPrisma.studyList.update.mockResolvedValue(TEST_STUDY_LIST);
+
+    await updateStudyList(
+      createFormData({
+        id: "list-1",
+        title: "My Study List",
+        isPublic: "false",
+      }),
+    );
+
+    expect(mockPrisma.studyList.update).toHaveBeenCalledWith({
+      where: { id: "list-1" },
+      data: expect.objectContaining({ isPublic: false }),
+    });
+  });
+
+  it("updates isPublic to true", async () => {
+    mockAuthenticated();
+    const privateList = { ...TEST_STUDY_LIST, isPublic: false };
+    mockPrisma.studyList.findFirst.mockResolvedValue(privateList);
+    mockPrisma.studyList.update.mockResolvedValue(privateList);
+
+    await updateStudyList(
+      createFormData({
+        id: "list-1",
+        title: "My Study List",
+        isPublic: "true",
+      }),
+    );
+
+    expect(mockPrisma.studyList.update).toHaveBeenCalledWith({
+      where: { id: "list-1" },
+      data: expect.objectContaining({ isPublic: true }),
     });
   });
 

@@ -105,27 +105,24 @@ export function CreateStudyListModal({
             </div>
           </div>
           <input type="hidden" name="isPublic" value={String(isPublic)} />
-          <button
-            type="button"
-            onClick={() => setIsPublic((v) => !v)}
-            className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-border/50 p-3 text-left transition-colors duration-200 hover:bg-muted/50"
-          >
-            {isPublic ? (
-              <Globe className="h-4 w-4 shrink-0 text-muted-foreground" />
-            ) : (
-              <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
-            )}
-            <div>
-              <p className="text-sm font-medium">
-                {isPublic ? "Public" : "Private"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {isPublic
-                  ? "Anyone with the link can view this list"
-                  : "Only you can see this list"}
-              </p>
-            </div>
-          </button>
+          <div className="inline-flex rounded-lg bg-muted p-0.5">
+            <button
+              type="button"
+              onClick={() => setIsPublic(true)}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${isPublic ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <Globe className="h-3.5 w-3.5" />
+              Public
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsPublic(false)}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${!isPublic ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <Lock className="h-3.5 w-3.5" />
+              Private
+            </button>
+          </div>
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={onClose}>
               Cancel
