@@ -8,6 +8,7 @@ import {
   deleteStudyItem,
   updateStudyItem,
 } from "@/app/(app)/dashboard/[slug]/actions";
+import { ProgressBar } from "@/components/ui";
 import { StudyListHeader } from "./study-list-header";
 import { ItemsEmptyState } from "./items-empty-state";
 import { StudyItemRow } from "./study-item-row";
@@ -128,6 +129,10 @@ export function StudyItemList({
     });
   };
 
+  const completed = optimisticItems.filter((i) => i.completed).length;
+  const total = optimisticItems.length;
+  const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
   return (
     <>
       <StudyListHeader
@@ -137,6 +142,14 @@ export function StudyItemList({
         isPublic={isPublic}
         onCreateClick={() => setCreateModalOpen(true)}
       />
+
+      {total > 0 && (
+        <ProgressBar
+          value={progress}
+          label={`${completed} of ${total} completed`}
+          className="mt-6"
+        />
+      )}
 
       <div className="mt-8">
         {optimisticItems.length === 0 ? (

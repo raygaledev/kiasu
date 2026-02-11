@@ -3,6 +3,7 @@ export { Badge } from "./badge";
 export { Button } from "./button";
 export { Card } from "./card";
 export { Container } from "./container";
+export { ProgressBar } from "./progress-bar";
 export { Skeleton } from "./skeleton";
 export { Spinner } from "./spinner";
 export { UrlIcon } from "./url-icon";
