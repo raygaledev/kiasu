@@ -28,7 +28,7 @@ function listReducer(
 ): OptimisticStudyListWithItemCount[] {
   switch (action.type) {
     case "create":
-      return [...state, action.list];
+      return [action.list, ...state];
     case "update":
       return state.map((l) =>
         l.id === action.listId ? { ...l, ...action.data } : l,
