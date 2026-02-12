@@ -34,7 +34,11 @@ export function StudyListCard({ list, onEdit, onDelete }: StudyListCardProps) {
 
   return (
     <>
-      <div ref={setNodeRef} style={style} className={cn('h-full', isDragging && 'z-50 opacity-80')}>
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={cn('h-full', isDragging && 'z-50 opacity-80')}
+      >
         <Card
           className={cn(
             'flex h-full flex-col transition-all duration-200 hover:shadow-md hover:shadow-primary/5',
@@ -73,7 +77,7 @@ export function StudyListCard({ list, onEdit, onDelete }: StudyListCardProps) {
           </div>
 
           {list.description && (
-            <p className='mt-4 line-clamp-2 text-sm text-muted-foreground'>
+            <p className='mt-4 line-clamp-1 text-sm text-muted-foreground'>
               {list.description}
             </p>
           )}
