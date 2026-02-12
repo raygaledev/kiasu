@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma/client";
 import { Container } from "@/components/ui";
 import { notFound } from "next/navigation";
 import { Lock } from "lucide-react";
-import { UrlIcon } from "@/components/ui/url-icon";
+import { SharedStudyItemList } from "@/components/share/shared-study-item-list";
 
 export default async function SharedStudyListPage({
   params,
@@ -39,74 +39,19 @@ export default async function SharedStudyListPage({
     );
   }
 
+  const items = studyList.items.map((item) => ({
+    ...item,
+    completed: false,
+  }));
+
   return (
     <Container as="section" className="py-8">
-      <div>
-        <h1 className="text-2xl font-bold">{studyList.title}</h1>
-        {studyList.description && (
-          <p className="mt-1 text-muted-foreground">{studyList.description}</p>
-        )}
-      </div>
-
-      <div className="mt-8 space-y-2">
-        {studyList.items.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center gap-3 rounded-xl border border-border/50 p-4"
-          >
-            <div
-              className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-border data-[checked=true]:border-primary data-[checked=true]:bg-primary"
-              data-checked={item.completed}
-            >
-              {item.completed ? (
-                <svg
-                  className="h-3 w-3 text-primary-foreground"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={3}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              ) : null}
-            </div>
-
-            <div className="min-w-0 flex-1">
-              {item.url ? (
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-foreground transition-colors duration-200 hover:text-primary"
-                >
-                  <UrlIcon url={item.url} />
-                  <p
-                    className={`text-sm font-medium ${item.completed ? "text-muted-foreground line-through" : ""}`}
-                  >
-                    {item.title}
-                  </p>
-                </a>
-              ) : (
-                <p
-                  className={`text-sm font-medium ${item.completed ? "text-muted-foreground line-through" : ""}`}
-                >
-                  {item.title}
-                </p>
-              )}
-              {item.notes && (
-                <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                  {item.notes}
-                </p>
-              )}
-            </div>
-
-          </div>
-        ))}
-      </div>
+      <SharedStudyItemList
+        listId={studyList.id}
+        title={studyList.title}
+        description={studyList.description}
+        items={items}
+      />
     </Container>
   );
 }

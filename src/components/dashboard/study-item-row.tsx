@@ -10,8 +10,9 @@ import { UrlIcon } from '@/components/ui/url-icon';
 interface StudyItemRowProps {
   item: OptimisticStudyItem;
   onToggle: () => void;
-  onDelete: () => void;
-  onEdit: (formData: FormData) => void;
+  onDelete?: () => void;
+  onEdit?: (formData: FormData) => void;
+  readOnly?: boolean;
 }
 
 export function StudyItemRow({
@@ -19,6 +20,7 @@ export function StudyItemRow({
   onToggle,
   onDelete,
   onEdit,
+  readOnly,
 }: StudyItemRowProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -121,28 +123,32 @@ export function StudyItemRow({
           )}
         </div>
 
-        <div className='flex shrink-0 items-center gap-1'>
-          <button
-            onClick={() => setEditOpen(true)}
-            className='cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground'
-          >
-            <Pencil className='h-4 w-4' />
-          </button>
-          <button
-            onClick={onDelete}
-            className='cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-destructive'
-          >
-            <Trash2 className='h-4 w-4' />
-          </button>
-        </div>
+        {!readOnly && (
+          <div className='flex shrink-0 items-center gap-1'>
+            <button
+              onClick={() => setEditOpen(true)}
+              className='cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground'
+            >
+              <Pencil className='h-4 w-4' />
+            </button>
+            <button
+              onClick={onDelete}
+              className='cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-destructive'
+            >
+              <Trash2 className='h-4 w-4' />
+            </button>
+          </div>
+        )}
       </div>
 
-      <EditItemModal
-        open={editOpen}
-        onClose={() => setEditOpen(false)}
-        item={item}
-        onSubmit={onEdit}
-      />
+      {!readOnly && onEdit && (
+        <EditItemModal
+          open={editOpen}
+          onClose={() => setEditOpen(false)}
+          item={item}
+          onSubmit={onEdit}
+        />
+      )}
     </>
   );
 }
