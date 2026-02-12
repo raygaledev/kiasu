@@ -27,6 +27,7 @@ model StudyList {
   description String?
   slug        String
   isPublic    Boolean  @default(true)
+  position    Int      @default(0)
   userId      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

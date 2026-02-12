@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   const studyLists = await prisma.studyList.findMany({
     where: { userId: user!.id },
     include: { _count: { select: { items: true } } },
-    orderBy: { createdAt: "desc" },
+    orderBy: { position: "asc" },
   });
 
   return (

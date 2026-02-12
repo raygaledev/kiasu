@@ -40,15 +40,23 @@ export async function createStudyList(formData: FormData) {
 
   const isPublic = formData.get("isPublic") === "true";
 
-  await prisma.studyList.create({
-    data: {
-      title,
-      description: description || null,
-      slug,
-      isPublic,
-      userId: user.id,
-    },
-  });
+  await prisma.$transaction([
+    // Shift all existing lists down to make room at position 0
+    prisma.studyList.updateMany({
+      where: { userId: user.id },
+      data: { position: { increment: 1 } },
+    }),
+    prisma.studyList.create({
+      data: {
+        title,
+        description: description || null,
+        slug,
+        isPublic,
+        position: 0,
+        userId: user.id,
+      },
+    }),
+  ]);
 
   revalidatePath("/dashboard");
   return { success: true };
@@ -133,6 +141,40 @@ export async function deleteStudyList(id: string) {
 
   // Cascade delete handles items automatically
   await prisma.studyList.delete({ where: { id } });
+
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function reorderStudyLists(orderedIds: string[]) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  // Verify all lists belong to this user
+  const lists = await prisma.studyList.findMany({
+    where: { userId: user.id },
+    select: { id: true },
+  });
+
+  const userListIds = new Set(lists.map((l) => l.id));
+  if (orderedIds.some((id) => !userListIds.has(id))) {
+    return { error: "Invalid list ID" };
+  }
+
+  await prisma.$transaction(
+    orderedIds.map((id, index) =>
+      prisma.studyList.update({
+        where: { id },
+        data: { position: index },
+      }),
+    ),
+  );
 
   revalidatePath("/dashboard");
   return { success: true };

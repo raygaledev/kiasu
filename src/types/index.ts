@@ -13,6 +13,7 @@ export interface StudyList {
   description: string | null;
   slug: string;
   isPublic: boolean;
+  position: number;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -51,4 +52,5 @@ export type StudyItemAction =
 export type StudyListAction =
   | { type: "create"; list: OptimisticStudyListWithItemCount }
   | { type: "update"; listId: string; data: Partial<StudyList> }
-  | { type: "delete"; listId: string };
+  | { type: "delete"; listId: string }
+  | { type: "reorder"; orderedIds: string[] };

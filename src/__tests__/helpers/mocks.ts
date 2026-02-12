@@ -11,6 +11,7 @@ export const TEST_STUDY_LIST = {
   description: "A description",
   slug: "my-study-list",
   isPublic: true,
+  position: 0,
   userId: TEST_USER.id,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -57,17 +58,24 @@ export const mockPrisma = {
   studyList: {
     findUnique: vi.fn(),
     findFirst: vi.fn(),
+    findMany: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
+    updateMany: vi.fn(),
     delete: vi.fn(),
   },
   studyItem: {
     findUnique: vi.fn(),
     findFirst: vi.fn(),
+    findMany: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
+    updateMany: vi.fn(),
     delete: vi.fn(),
   },
+  $transaction: vi.fn((args: unknown) =>
+    Array.isArray(args) ? Promise.all(args) : (args as () => unknown)(),
+  ),
 };
 
 vi.mock("@/lib/prisma/client", () => ({

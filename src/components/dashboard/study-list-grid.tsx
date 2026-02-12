@@ -3,9 +3,25 @@
 import { useOptimistic, useTransition, useState } from "react";
 import { toast } from "sonner";
 import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  rectSortingStrategy,
+  sortableKeyboardCoordinates,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import {
   createStudyList,
   updateStudyList,
   deleteStudyList,
+  reorderStudyLists,
 } from "@/app/(app)/dashboard/actions";
 import { generateSlug } from "@/lib/utils";
 import { DashboardHeader } from "./dashboard-header";
@@ -35,6 +51,12 @@ function listReducer(
       );
     case "delete":
       return state.filter((l) => l.id !== action.listId);
+    case "reorder": {
+      const byId = new Map(state.map((l) => [l.id, l]));
+      return action.orderedIds
+        .map((id) => byId.get(id))
+        .filter(Boolean) as OptimisticStudyListWithItemCount[];
+    }
   }
 }
 
@@ -42,6 +64,37 @@ export function StudyListGrid({ studyLists }: StudyListGridProps) {
   const [, startTransition] = useTransition();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [optimisticLists, dispatch] = useOptimistic(studyLists, listReducer);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 8 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = optimisticLists.findIndex((l) => l.id === active.id);
+    const newIndex = optimisticLists.findIndex((l) => l.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(optimisticLists, oldIndex, newIndex);
+    const orderedIds = reordered.map((l) => l.id);
+
+    startTransition(async () => {
+      dispatch({ type: "reorder", orderedIds });
+      try {
+        const result = await reorderStudyLists(orderedIds);
+        if (result.error) toast.error(result.error);
+      } catch {
+        toast.error("Something went wrong. Please try again.");
+      }
+    });
+  };
 
   const handleCreate = (formData: FormData) => {
     const createTitle = (formData.get("title") as string)?.trim() ?? "";
@@ -54,6 +107,7 @@ export function StudyListGrid({ studyLists }: StudyListGridProps) {
       description,
       slug: generateSlug(createTitle),
       isPublic,
+      position: 0,
       userId: "",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -115,16 +169,28 @@ export function StudyListGrid({ studyLists }: StudyListGridProps) {
         {optimisticLists.length === 0 ? (
           <EmptyState onCreateClick={() => setCreateModalOpen(true)} />
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {optimisticLists.map((list) => (
-              <StudyListCard
-                key={list.id}
-                list={list}
-                onEdit={(fd) => handleEdit(list.id, fd)}
-                onDelete={() => handleDelete(list.id)}
-              />
-            ))}
-          </div>
+          <DndContext
+            id="study-list-dnd"
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={optimisticLists.map((l) => l.id)}
+              strategy={rectSortingStrategy}
+            >
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {optimisticLists.map((list) => (
+                  <StudyListCard
+                    key={list.id}
+                    list={list}
+                    onEdit={(fd) => handleEdit(list.id, fd)}
+                    onDelete={() => handleDelete(list.id)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 
