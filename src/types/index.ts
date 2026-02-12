@@ -12,6 +12,7 @@ export interface StudyList {
   title: string;
   description: string | null;
   slug: string;
+  category: string;
   isPublic: boolean;
   position: number;
   userId: string;

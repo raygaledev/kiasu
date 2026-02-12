@@ -29,14 +29,32 @@ describe("createStudyList", () => {
 
   it("returns error when title is empty", async () => {
     mockAuthenticated();
-    const result = await createStudyList(createFormData({ title: "" }));
+    const result = await createStudyList(
+      createFormData({ title: "", category: "programming" }),
+    );
     expect(result).toEqual({ error: "Title is required" });
   });
 
   it("returns error when title is only whitespace", async () => {
     mockAuthenticated();
-    const result = await createStudyList(createFormData({ title: "   " }));
+    const result = await createStudyList(
+      createFormData({ title: "   ", category: "programming" }),
+    );
     expect(result).toEqual({ error: "Title is required" });
+  });
+
+  it("returns error when category is missing", async () => {
+    mockAuthenticated();
+    const result = await createStudyList(createFormData({ title: "Test" }));
+    expect(result).toEqual({ error: "Category is required" });
+  });
+
+  it("returns error when category is invalid", async () => {
+    mockAuthenticated();
+    const result = await createStudyList(
+      createFormData({ title: "Test", category: "invalid-category" }),
+    );
+    expect(result).toEqual({ error: "Category is required" });
   });
 
   it("creates a study list with generated slug", async () => {
@@ -45,7 +63,11 @@ describe("createStudyList", () => {
     mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
 
     const result = await createStudyList(
-      createFormData({ title: "My Study List", description: "A description" }),
+      createFormData({
+        title: "My Study List",
+        description: "A description",
+        category: "programming",
+      }),
     );
 
     expect(result).toEqual({ success: true });
@@ -54,6 +76,7 @@ describe("createStudyList", () => {
         title: "My Study List",
         description: "A description",
         slug: "my-study-list",
+        category: "programming",
         userId: TEST_USER.id,
       }),
     });
@@ -67,7 +90,9 @@ describe("createStudyList", () => {
     const now = Date.now();
     vi.spyOn(Date, "now").mockReturnValue(now);
 
-    await createStudyList(createFormData({ title: "My Study List" }));
+    await createStudyList(
+      createFormData({ title: "My Study List", category: "programming" }),
+    );
 
     expect(mockPrisma.studyList.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
@@ -84,7 +109,11 @@ describe("createStudyList", () => {
     mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
 
     await createStudyList(
-      createFormData({ title: "  Trimmed  ", description: "  Desc  " }),
+      createFormData({
+        title: "  Trimmed  ",
+        description: "  Desc  ",
+        category: "programming",
+      }),
     );
 
     expect(mockPrisma.studyList.create).toHaveBeenCalledWith({
@@ -100,7 +129,9 @@ describe("createStudyList", () => {
     mockPrisma.studyList.findUnique.mockResolvedValue(null);
     mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
 
-    await createStudyList(createFormData({ title: "Test" }));
+    await createStudyList(
+      createFormData({ title: "Test", category: "programming" }),
+    );
 
     expect(mockPrisma.studyList.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
@@ -115,7 +146,11 @@ describe("createStudyList", () => {
     mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
 
     await createStudyList(
-      createFormData({ title: "Test", isPublic: "true" }),
+      createFormData({
+        title: "Test",
+        category: "programming",
+        isPublic: "true",
+      }),
     );
 
     expect(mockPrisma.studyList.create).toHaveBeenCalledWith({
@@ -129,7 +164,11 @@ describe("createStudyList", () => {
     mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
 
     await createStudyList(
-      createFormData({ title: "Test", isPublic: "false" }),
+      createFormData({
+        title: "Test",
+        category: "programming",
+        isPublic: "false",
+      }),
     );
 
     expect(mockPrisma.studyList.create).toHaveBeenCalledWith({
@@ -142,7 +181,9 @@ describe("createStudyList", () => {
     mockPrisma.studyList.findUnique.mockResolvedValue(null);
     mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
 
-    await createStudyList(createFormData({ title: "Test" }));
+    await createStudyList(
+      createFormData({ title: "Test", category: "programming" }),
+    );
 
     expect(mockPrisma.studyList.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ isPublic: false }),
@@ -154,7 +195,9 @@ describe("createStudyList", () => {
     mockPrisma.studyList.findUnique.mockResolvedValue(null);
     mockPrisma.studyList.create.mockResolvedValue(TEST_STUDY_LIST);
 
-    await createStudyList(createFormData({ title: "Test" }));
+    await createStudyList(
+      createFormData({ title: "Test", category: "programming" }),
+    );
 
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
   });
@@ -175,7 +218,11 @@ describe("updateStudyList", () => {
     mockPrisma.studyList.findFirst.mockResolvedValue(null);
 
     const result = await updateStudyList(
-      createFormData({ id: "nonexistent", title: "Updated" }),
+      createFormData({
+        id: "nonexistent",
+        title: "Updated",
+        category: "programming",
+      }),
     );
     expect(result).toEqual({ error: "Study list not found" });
   });
@@ -185,7 +232,11 @@ describe("updateStudyList", () => {
     mockPrisma.studyList.findFirst.mockResolvedValue(null); // findFirst with userId filter returns null
 
     const result = await updateStudyList(
-      createFormData({ id: "list-1", title: "Updated" }),
+      createFormData({
+        id: "list-1",
+        title: "Updated",
+        category: "programming",
+      }),
     );
     expect(result).toEqual({ error: "Study list not found" });
   });
@@ -193,7 +244,7 @@ describe("updateStudyList", () => {
   it("returns error when title is empty", async () => {
     mockAuthenticated();
     const result = await updateStudyList(
-      createFormData({ id: "list-1", title: "" }),
+      createFormData({ id: "list-1", title: "", category: "programming" }),
     );
     expect(result).toEqual({ error: "Title is required" });
   });
@@ -208,6 +259,7 @@ describe("updateStudyList", () => {
         id: "list-1",
         title: "My Study List",
         description: "New desc",
+        category: "programming",
       }),
     );
 
@@ -226,7 +278,13 @@ describe("updateStudyList", () => {
       .mockResolvedValueOnce(null); // slug uniqueness check
     mockPrisma.studyList.update.mockResolvedValue(TEST_STUDY_LIST);
 
-    await updateStudyList(createFormData({ id: "list-1", title: "New Title" }));
+    await updateStudyList(
+      createFormData({
+        id: "list-1",
+        title: "New Title",
+        category: "programming",
+      }),
+    );
 
     expect(mockPrisma.studyList.update).toHaveBeenCalledWith({
       where: { id: "list-1" },
@@ -245,6 +303,7 @@ describe("updateStudyList", () => {
       createFormData({
         id: "list-1",
         title: "My Study List",
+        category: "programming",
         isPublic: "false",
       }),
     );
@@ -265,6 +324,7 @@ describe("updateStudyList", () => {
       createFormData({
         id: "list-1",
         title: "My Study List",
+        category: "programming",
         isPublic: "true",
       }),
     );
@@ -285,7 +345,13 @@ describe("updateStudyList", () => {
     const now = Date.now();
     vi.spyOn(Date, "now").mockReturnValue(now);
 
-    await updateStudyList(createFormData({ id: "list-1", title: "New Title" }));
+    await updateStudyList(
+      createFormData({
+        id: "list-1",
+        title: "New Title",
+        category: "programming",
+      }),
+    );
 
     expect(mockPrisma.studyList.update).toHaveBeenCalledWith({
       where: { id: "list-1" },

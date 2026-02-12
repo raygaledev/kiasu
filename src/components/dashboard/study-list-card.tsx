@@ -2,7 +2,8 @@
 
 import { Card } from '@/components/ui';
 import { EditStudyListModal } from './edit-study-list-modal';
-import { BookOpen, GripVertical, Lock, Pencil } from 'lucide-react';
+import { getCategoryIcon } from '@/lib/categories';
+import { GripVertical, Lock, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
@@ -18,6 +19,7 @@ interface StudyListCardProps {
 
 export function StudyListCard({ list, onEdit, onDelete }: StudyListCardProps) {
   const [editOpen, setEditOpen] = useState(false);
+  const CategoryIcon = getCategoryIcon(list.category);
   const {
     attributes,
     listeners,
@@ -50,7 +52,7 @@ export function StudyListCard({ list, onEdit, onDelete }: StudyListCardProps) {
               href={`/dashboard/${list.slug}`}
               className='flex cursor-pointer items-center gap-2'
             >
-              <BookOpen className='h-5 w-5 text-primary' />
+              <CategoryIcon className='h-5 w-5 text-primary' />
               <h3 className='font-semibold'>{list.title}</h3>
               {!list.isPublic && (
                 <span className='inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground'>

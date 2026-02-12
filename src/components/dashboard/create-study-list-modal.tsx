@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui";
 import { studyListSchema } from "@/lib/validations/schemas";
-import { X, Globe, Lock } from "lucide-react";
+import { CATEGORIES } from "@/lib/categories";
+import { X, Globe, Lock, ChevronDown } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
 interface CreateStudyListModalProps {
@@ -19,6 +20,7 @@ export function CreateStudyListModal({
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isPublic, setIsPublic] = useState(true);
+  const [category, setCategory] = useState("");
 
   if (!open) return null;
 
@@ -28,6 +30,7 @@ export function CreateStudyListModal({
     const result = studyListSchema.safeParse({
       title: formData.get("title") as string,
       description: formData.get("description") as string,
+      category: formData.get("category") as string,
     });
 
     if (!result.success) {
@@ -45,6 +48,7 @@ export function CreateStudyListModal({
     onSubmit(formData);
     formRef.current?.reset();
     setIsPublic(true);
+    setCategory("");
     onClose();
   };
 
@@ -81,6 +85,38 @@ export function CreateStudyListModal({
               />
               {errors.title && (
                 <p className="mt-1 text-xs text-destructive">{errors.title}</p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium"
+              >
+                Category <span className="text-destructive">*</span>
+              </label>
+              <div className="relative mt-1">
+                <select
+                  id="category"
+                  name="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className={`block w-full appearance-none rounded-xl border ${errors.category ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 pr-8 text-sm focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200 ${!category ? "text-muted-foreground" : ""}`}
+                >
+                  <option value="" disabled>
+                    Select a category
+                  </option>
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              </div>
+              {errors.category && (
+                <p className="mt-1 text-xs text-destructive">
+                  {errors.category}
+                </p>
               )}
             </div>
             <div>

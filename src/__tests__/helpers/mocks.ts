@@ -10,6 +10,7 @@ export const TEST_STUDY_LIST = {
   title: "My Study List",
   description: "A description",
   slug: "my-study-list",
+  category: "programming",
   isPublic: true,
   position: 0,
   userId: TEST_USER.id,

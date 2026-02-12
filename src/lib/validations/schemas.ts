@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CATEGORY_VALUES } from "@/lib/category-values";
 
 const safeText = z
   .string()
@@ -8,6 +9,12 @@ const safeText = z
 export const studyListSchema = z.object({
   title: safeText.pipe(z.string().min(1, "Title is required").max(200)),
   description: safeText.pipe(z.string().max(1000)).optional().or(z.literal("")),
+  category: z
+    .string()
+    .refine((val): val is (typeof CATEGORY_VALUES)[number] =>
+      CATEGORY_VALUES.includes(val as (typeof CATEGORY_VALUES)[number]),
+      { message: "Category is required" },
+    ),
 });
 
 export const studyItemSchema = z.object({

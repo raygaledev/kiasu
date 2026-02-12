@@ -101,11 +101,14 @@ export function StudyListGrid({ studyLists }: StudyListGridProps) {
     const description = (formData.get("description") as string)?.trim() || null;
     const isPublic = formData.get("isPublic") === "true";
 
+    const category = (formData.get("category") as string) ?? "other";
+
     const tempList: OptimisticStudyListWithItemCount = {
       id: `temp-${Date.now()}`,
       title: createTitle,
       description,
       slug: generateSlug(createTitle),
+      category,
       isPublic,
       position: 0,
       userId: "",
@@ -129,13 +132,14 @@ export function StudyListGrid({ studyLists }: StudyListGridProps) {
   const handleEdit = (listId: string, formData: FormData) => {
     const editTitle = (formData.get("title") as string)?.trim() ?? "";
     const description = (formData.get("description") as string)?.trim() || null;
+    const category = (formData.get("category") as string) ?? "other";
     const isPublic = formData.get("isPublic") === "true";
 
     startTransition(async () => {
       dispatch({
         type: "update",
         listId,
-        data: { title: editTitle, description, isPublic },
+        data: { title: editTitle, description, category, isPublic },
       });
       try {
         const result = await updateStudyList(formData);

@@ -19,13 +19,14 @@ export async function createStudyList(formData: FormData) {
   const parsed = studyListSchema.safeParse({
     title: (formData.get("title") as string) ?? "",
     description: (formData.get("description") as string) ?? "",
+    category: (formData.get("category") as string) ?? "",
   });
 
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { title, description } = parsed.data;
+  const { title, description, category } = parsed.data;
 
   let slug = generateSlug(title);
 
@@ -51,6 +52,7 @@ export async function createStudyList(formData: FormData) {
         title,
         description: description || null,
         slug,
+        category,
         isPublic,
         position: 0,
         userId: user.id,
@@ -77,13 +79,14 @@ export async function updateStudyList(formData: FormData) {
   const parsed = studyListSchema.safeParse({
     title: (formData.get("title") as string) ?? "",
     description: (formData.get("description") as string) ?? "",
+    category: (formData.get("category") as string) ?? "",
   });
 
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { title, description } = parsed.data;
+  const { title, description, category } = parsed.data;
 
   // Verify ownership
   const existing = await prisma.studyList.findFirst({
@@ -113,6 +116,7 @@ export async function updateStudyList(formData: FormData) {
       title,
       description: description || null,
       slug,
+      category,
       isPublic,
     },
   });

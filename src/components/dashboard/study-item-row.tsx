@@ -56,6 +56,7 @@ export function StudyItemRow({
         style={style}
         className={cn(
           'flex items-center gap-3 rounded-xl border border-border/50 p-4 transition-all duration-200 hover:border-border hover:bg-muted/50',
+          item.completed && 'opacity-50',
           item.pending && 'pointer-events-none opacity-70',
           isDragging && 'z-50 opacity-80',
         )}

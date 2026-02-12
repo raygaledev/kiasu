@@ -26,6 +26,7 @@ model StudyList {
   title       String
   description String?
   slug        String
+  category    String   @default("other")
   isPublic    Boolean  @default(true)
   position    Int      @default(0)
   userId      String
