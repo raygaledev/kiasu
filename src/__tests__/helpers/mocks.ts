@@ -1,16 +1,16 @@
-import { vi } from "vitest";
+import { vi } from 'vitest';
 
 // ── Test Users ──────────────────────────────────────────────
-export const TEST_USER = { id: "user-1", email: "test@example.com" };
-export const OTHER_USER = { id: "user-2", email: "other@example.com" };
+export const TEST_USER = { id: 'user-1', email: 'test@example.com' };
+export const OTHER_USER = { id: 'user-2', email: 'other@example.com' };
 
 // ── Test Data ───────────────────────────────────────────────
 export const TEST_STUDY_LIST = {
-  id: "list-1",
-  title: "My Study List",
-  description: "A description",
-  slug: "my-study-list",
-  category: "programming",
+  id: 'list-1',
+  title: 'My Study List',
+  description: 'A description',
+  slug: 'my-study-list',
+  category: 'programming',
   isPublic: true,
   position: 0,
   userId: TEST_USER.id,
@@ -19,10 +19,10 @@ export const TEST_STUDY_LIST = {
 };
 
 export const TEST_STUDY_ITEM = {
-  id: "item-1",
-  title: "Study Item",
-  notes: "Some notes",
-  url: "https://example.com",
+  id: 'item-1',
+  title: 'Study Item',
+  notes: 'Some notes',
+  url: 'https://example.com',
   completed: false,
   position: 0,
   studyListId: TEST_STUDY_LIST.id,
@@ -44,12 +44,27 @@ export function createFormData(entries: Record<string, string>): FormData {
 export const mockGetUser = vi.fn();
 export const mockExchangeCodeForSession = vi.fn();
 
-vi.mock("@/lib/supabase/server", () => ({
+export const mockStorageUpload = vi.fn();
+export const mockStorageList = vi.fn();
+export const mockStorageRemove = vi.fn();
+export const mockStorageGetPublicUrl = vi.fn();
+
+const mockStorageFrom = vi.fn().mockReturnValue({
+  upload: (...args: unknown[]) => mockStorageUpload(...args),
+  list: (...args: unknown[]) => mockStorageList(...args),
+  remove: (...args: unknown[]) => mockStorageRemove(...args),
+  getPublicUrl: (...args: unknown[]) => mockStorageGetPublicUrl(...args),
+});
+
+vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn().mockResolvedValue({
     auth: {
       getUser: (...args: unknown[]) => mockGetUser(...args),
       exchangeCodeForSession: (...args: unknown[]) =>
         mockExchangeCodeForSession(...args),
+    },
+    storage: {
+      from: (...args: unknown[]) => mockStorageFrom(...args),
     },
   }),
 }));
@@ -74,19 +89,23 @@ export const mockPrisma = {
     updateMany: vi.fn(),
     delete: vi.fn(),
   },
+  user: {
+    findUnique: vi.fn(),
+    update: vi.fn(),
+  },
   $transaction: vi.fn((args: unknown) =>
     Array.isArray(args) ? Promise.all(args) : (args as () => unknown)(),
   ),
 };
 
-vi.mock("@/lib/prisma/client", () => ({
+vi.mock('@/lib/prisma/client', () => ({
   prisma: mockPrisma,
 }));
 
 // ── Next.js Cache Mock ──────────────────────────────────────
 export const mockRevalidatePath = vi.fn();
 
-vi.mock("next/cache", () => ({
+vi.mock('next/cache', () => ({
   revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 

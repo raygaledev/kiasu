@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui";
-import { BookOpen, Plus } from "lucide-react";
+import { Button } from '@/components/ui';
+import { BookOpen, Plus } from 'lucide-react';
 
 interface EmptyStateProps {
   onCreateClick: () => void;

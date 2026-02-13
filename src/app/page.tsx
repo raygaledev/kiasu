@@ -1,32 +1,32 @@
-import { Button, Container } from "@/components/ui";
-import { BookOpen, Share2, CheckSquare, Users } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import Link from "next/link";
+import { Button, Container } from '@/components/ui';
+import { BookOpen, Share2, CheckSquare, Users } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 const features = [
   {
     icon: BookOpen,
-    title: "Organize Your Studies",
+    title: 'Organize Your Studies',
     description:
-      "Create structured study lists to keep track of everything you need to learn.",
+      'Create structured study lists to keep track of everything you need to learn.',
   },
   {
     icon: CheckSquare,
-    title: "Track Progress",
-    description: "Mark items as completed and see your progress at a glance.",
+    title: 'Track Progress',
+    description: 'Mark items as completed and see your progress at a glance.',
   },
   {
     icon: Share2,
-    title: "Share with Others",
+    title: 'Share with Others',
     description:
-      "Make your lists public and share your curated study resources.",
+      'Make your lists public and share your curated study resources.',
   },
   {
     icon: Users,
-    title: "Learn Together",
+    title: 'Learn Together',
     description:
-      "Discover study lists from the community and learn from others.",
+      'Discover study lists from the community and learn from others.',
   },
 ];
 
@@ -37,7 +37,7 @@ export default async function HomePage() {
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect("/dashboard");
+    redirect('/dashboard');
   }
 
   return (
@@ -46,7 +46,7 @@ export default async function HomePage() {
       <section className="py-32 sm:py-44">
         <Container className="text-center">
           <h1 className="text-5xl font-bold tracking-tight sm:text-7xl">
-            Study smarter,{" "}
+            Study smarter,{' '}
             <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
               not harder
             </span>

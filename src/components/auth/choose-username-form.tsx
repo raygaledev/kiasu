@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { Card, Button } from "@/components/ui";
-import { chooseUsernameSchema } from "@/lib/validations/schemas";
-import { checkUsernameAvailability, setUsername } from "@/app/auth/actions";
-import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef, type FormEvent } from "react";
-import { toast } from "sonner";
+import { Card, Button } from '@/components/ui';
+import { chooseUsernameSchema } from '@/lib/validations/schemas';
+import { checkUsernameAvailability, setUsername } from '@/app/auth/actions';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, type FormEvent } from 'react';
+import { toast } from 'sonner';
 
 export function ChooseUsernameForm() {
   const router = useRouter();
-  const [username, setUsernameValue] = useState("");
+  const [username, setUsernameValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [usernameStatus, setUsernameStatus] = useState<
-    "idle" | "checking" | "available" | "taken"
-  >("idle");
+    'idle' | 'checking' | 'available' | 'taken'
+  >('idle');
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const handleUsernameChange = (value: string) => {
     setUsernameValue(value);
     if (value.length >= 3) {
-      setUsernameStatus("checking");
+      setUsernameStatus('checking');
     } else {
-      setUsernameStatus("idle");
+      setUsernameStatus('idle');
     }
   };
 
@@ -32,10 +32,10 @@ export function ChooseUsernameForm() {
     debounceRef.current = setTimeout(async () => {
       const result = await checkUsernameAvailability(username);
       if (result.error) {
-        setUsernameStatus("idle");
+        setUsernameStatus('idle');
         setError(result.error);
       } else {
-        setUsernameStatus(result.available ? "available" : "taken");
+        setUsernameStatus(result.available ? 'available' : 'taken');
         setError(null);
       }
     }, 400);
@@ -49,12 +49,12 @@ export function ChooseUsernameForm() {
 
     const parsed = chooseUsernameSchema.safeParse({ username });
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Invalid username");
+      setError(parsed.error.issues[0]?.message ?? 'Invalid username');
       return;
     }
 
-    if (usernameStatus === "taken") {
-      setError("Username is already taken");
+    if (usernameStatus === 'taken') {
+      setError('Username is already taken');
       return;
     }
 
@@ -68,7 +68,7 @@ export function ChooseUsernameForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push('/dashboard');
     router.refresh();
   };
 
@@ -91,19 +91,19 @@ export function ChooseUsernameForm() {
             type="text"
             value={username}
             onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`mt-1 block w-full rounded-xl border ${error ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+            className={`mt-1 block w-full rounded-xl border ${error ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
             placeholder="cool_username"
             autoFocus
           />
-          {usernameStatus === "checking" && (
+          {usernameStatus === 'checking' && (
             <p className="mt-1 text-xs text-muted-foreground">
               Checking availability...
             </p>
           )}
-          {usernameStatus === "available" && (
+          {usernameStatus === 'available' && (
             <p className="mt-1 text-xs text-green-600">Username is available</p>
           )}
-          {usernameStatus === "taken" && (
+          {usernameStatus === 'taken' && (
             <p className="mt-1 text-xs text-destructive">
               Username is already taken
             </p>
@@ -111,7 +111,7 @@ export function ChooseUsernameForm() {
           {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
         </div>
         <Button type="submit" disabled={loading} className="w-full">
-          {loading ? "Setting username..." : "Continue"}
+          {loading ? 'Setting username...' : 'Continue'}
         </Button>
       </form>
     </Card>

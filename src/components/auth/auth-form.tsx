@@ -1,44 +1,44 @@
-"use client";
+'use client';
 
-import { createClient } from "@/lib/supabase/client";
-import { Card, Button } from "@/components/ui";
-import { SocialLoginButtons } from "./social-login-buttons";
-import { loginSchema, signupSchema } from "@/lib/validations/schemas";
+import { createClient } from '@/lib/supabase/client';
+import { Card, Button } from '@/components/ui';
+import { SocialLoginButtons } from './social-login-buttons';
+import { loginSchema, signupSchema } from '@/lib/validations/schemas';
 import {
   checkUsernameAvailability,
   resolveUsernameToEmail,
-} from "@/app/auth/actions";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef, type FormEvent } from "react";
-import { toast } from "sonner";
+} from '@/app/auth/actions';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, type FormEvent } from 'react';
+import { toast } from 'sonner';
 
 interface AuthFormProps {
-  mode: "login" | "signup";
+  mode: 'login' | 'signup';
 }
 
 export function AuthForm({ mode }: AuthFormProps) {
-  const isLogin = mode === "login";
+  const isLogin = mode === 'login';
   const router = useRouter();
-  const [identifier, setIdentifier] = useState("");
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [identifier, setIdentifier] = useState('');
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Username availability state (signup only)
   const [usernameStatus, setUsernameStatus] = useState<
-    "idle" | "checking" | "available" | "taken"
-  >("idle");
+    'idle' | 'checking' | 'available' | 'taken'
+  >('idle');
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const handleUsernameChange = (value: string) => {
     setUsername(value);
     if (value.length >= 3) {
-      setUsernameStatus("checking");
+      setUsernameStatus('checking');
     } else {
-      setUsernameStatus("idle");
+      setUsernameStatus('idle');
     }
   };
 
@@ -48,10 +48,10 @@ export function AuthForm({ mode }: AuthFormProps) {
     debounceRef.current = setTimeout(async () => {
       const result = await checkUsernameAvailability(username);
       if (result.error) {
-        setUsernameStatus("idle");
+        setUsernameStatus('idle');
         setErrors((prev) => ({ ...prev, username: result.error! }));
       } else {
-        setUsernameStatus(result.available ? "available" : "taken");
+        setUsernameStatus(result.available ? 'available' : 'taken');
         setErrors((prev) => {
           const next = { ...prev };
           delete next.username;
@@ -87,10 +87,10 @@ export function AuthForm({ mode }: AuthFormProps) {
       let loginEmail = identifier;
 
       // If identifier doesn't contain @, treat as username
-      if (!identifier.includes("@")) {
+      if (!identifier.includes('@')) {
         const resolved = await resolveUsernameToEmail(identifier);
         if (resolved.error || !resolved.email) {
-          toast.error(resolved.error ?? "Username not found");
+          toast.error(resolved.error ?? 'Username not found');
           setLoading(false);
           return;
         }
@@ -106,7 +106,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         setLoading(false);
         return;
       }
-      router.push("/dashboard");
+      router.push('/dashboard');
       router.refresh();
       setLoading(false);
     } else {
@@ -122,10 +122,10 @@ export function AuthForm({ mode }: AuthFormProps) {
         return;
       }
 
-      if (usernameStatus === "taken") {
+      if (usernameStatus === 'taken') {
         setErrors((prev) => ({
           ...prev,
-          username: "Username is already taken",
+          username: 'Username is already taken',
         }));
         return;
       }
@@ -147,25 +147,25 @@ export function AuthForm({ mode }: AuthFormProps) {
         setLoading(false);
         return;
       }
-      toast.success("Check your email to confirm your account");
+      toast.success('Check your email to confirm your account');
       setLoading(false);
     }
   };
 
   const inputClass = (field: string) =>
-    `mt-1 block w-full rounded-xl border ${errors[field] ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`;
+    `mt-1 block w-full rounded-xl border ${errors[field] ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`;
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
       <Card className="w-full max-w-md space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold">
-            {isLogin ? "Welcome back" : "Create your account"}
+            {isLogin ? 'Welcome back' : 'Create your account'}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {isLogin
-              ? "Sign in to continue to Kiasu"
-              : "Get started with Kiasu for free"}
+              ? 'Sign in to continue to Kiasu'
+              : 'Get started with Kiasu for free'}
           </p>
         </div>
 
@@ -191,7 +191,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                className={inputClass("identifier")}
+                className={inputClass('identifier')}
                 placeholder="you@example.com or username"
               />
               {errors.identifier && (
@@ -211,7 +211,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={inputClass("email")}
+                  className={inputClass('email')}
                   placeholder="you@example.com"
                 />
                 {errors.email && (
@@ -229,20 +229,20 @@ export function AuthForm({ mode }: AuthFormProps) {
                   type="text"
                   value={username}
                   onChange={(e) => handleUsernameChange(e.target.value)}
-                  className={inputClass("username")}
+                  className={inputClass('username')}
                   placeholder="cool_username"
                 />
-                {usernameStatus === "checking" && (
+                {usernameStatus === 'checking' && (
                   <p className="mt-1 text-xs text-muted-foreground">
                     Checking availability...
                   </p>
                 )}
-                {usernameStatus === "available" && (
+                {usernameStatus === 'available' && (
                   <p className="mt-1 text-xs text-green-600">
                     Username is available
                   </p>
                 )}
-                {usernameStatus === "taken" && (
+                {usernameStatus === 'taken' && (
                   <p className="mt-1 text-xs text-destructive">
                     Username is already taken
                   </p>
@@ -264,7 +264,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={inputClass("password")}
+              className={inputClass('password')}
               placeholder="At least 6 characters"
             />
             {errors.password && (
@@ -274,21 +274,21 @@ export function AuthForm({ mode }: AuthFormProps) {
           <Button type="submit" disabled={loading} className="w-full">
             {loading
               ? isLogin
-                ? "Signing in..."
-                : "Creating account..."
+                ? 'Signing in...'
+                : 'Creating account...'
               : isLogin
-                ? "Sign in"
-                : "Create account"}
+                ? 'Sign in'
+                : 'Create account'}
           </Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
-          {isLogin ? "Don't have an account? " : "Already have an account? "}
+          {isLogin ? "Don't have an account? " : 'Already have an account? '}
           <Link
-            href={isLogin ? "/signup" : "/login"}
+            href={isLogin ? '/signup' : '/login'}
             className="font-medium text-primary hover:underline"
           >
-            {isLogin ? "Sign up" : "Sign in"}
+            {isLogin ? 'Sign up' : 'Sign in'}
           </Link>
         </p>
       </Card>

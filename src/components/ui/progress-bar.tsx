@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { motion } from "motion/react";
+import { motion } from 'motion/react';
 
 interface ProgressBarProps {
   value: number;
@@ -20,10 +20,10 @@ export function ProgressBar({ value, label, className }: ProgressBarProps) {
       </div>
       <div className="h-2 rounded-full bg-muted">
         <motion.div
-          className={`h-full rounded-full ${isComplete ? "bg-emerald-500" : "bg-primary"}`}
+          className={`h-full rounded-full ${isComplete ? 'bg-emerald-500' : 'bg-primary'}`}
           initial={{ width: 0 }}
           animate={{ width: `${clamped}%` }}
-          transition={{ type: "spring", stiffness: 100, damping: 20 }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         />
       </div>
     </div>

@@ -1,8 +1,8 @@
-import { prisma } from "@/lib/prisma/client";
-import { Container } from "@/components/ui";
-import { notFound } from "next/navigation";
-import { Lock } from "lucide-react";
-import { SharedStudyItemList } from "@/components/share/shared-study-item-list";
+import { prisma } from '@/lib/prisma/client';
+import { Container } from '@/components/ui';
+import { notFound } from 'next/navigation';
+import { Lock } from 'lucide-react';
+import { SharedStudyItemList } from '@/components/share/shared-study-item-list';
 
 export default async function SharedStudyListPage({
   params,
@@ -14,7 +14,7 @@ export default async function SharedStudyListPage({
   const studyList = await prisma.studyList.findFirst({
     where: { id },
     include: {
-      items: { orderBy: { position: "asc" } },
+      items: { orderBy: { position: 'asc' } },
     },
   });
 

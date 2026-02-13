@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui";
-import { studyListSchema } from "@/lib/validations/schemas";
-import { CATEGORIES } from "@/lib/categories";
-import { X, Globe, Lock, ChevronDown } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
+import { Button } from '@/components/ui';
+import { studyListSchema } from '@/lib/validations/schemas';
+import { CATEGORIES } from '@/lib/categories';
+import { X, Globe, Lock, ChevronDown } from 'lucide-react';
+import { useRef, useState, type FormEvent } from 'react';
 
 interface CreateStudyListModalProps {
   open: boolean;
@@ -20,7 +20,7 @@ export function CreateStudyListModal({
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isPublic, setIsPublic] = useState(true);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState('');
 
   if (!open) return null;
 
@@ -28,9 +28,9 @@ export function CreateStudyListModal({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const result = studyListSchema.safeParse({
-      title: formData.get("title") as string,
-      description: formData.get("description") as string,
-      category: formData.get("category") as string,
+      title: formData.get('title') as string,
+      description: formData.get('description') as string,
+      category: formData.get('category') as string,
     });
 
     if (!result.success) {
@@ -48,7 +48,7 @@ export function CreateStudyListModal({
     onSubmit(formData);
     formRef.current?.reset();
     setIsPublic(true);
-    setCategory("");
+    setCategory('');
     onClose();
   };
 
@@ -80,7 +80,7 @@ export function CreateStudyListModal({
                 name="title"
                 type="text"
                 autoFocus
-                className={`mt-1 block w-full rounded-xl border ${errors.title ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                className={`mt-1 block w-full rounded-xl border ${errors.title ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
                 placeholder="e.g. React Fundamentals"
               />
               {errors.title && (
@@ -97,7 +97,7 @@ export function CreateStudyListModal({
                   name="category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className={`block w-full appearance-none rounded-xl border ${errors.category ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 pr-8 text-sm focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200 ${!category ? "text-muted-foreground" : ""}`}
+                  className={`block w-full appearance-none rounded-xl border ${errors.category ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 pr-8 text-sm focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200 ${!category ? 'text-muted-foreground' : ''}`}
                 >
                   <option value="" disabled>
                     Select a category
@@ -127,7 +127,7 @@ export function CreateStudyListModal({
                 id="description"
                 name="description"
                 rows={3}
-                className={`mt-1 block w-full resize-none rounded-xl border ${errors.description ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                className={`mt-1 block w-full resize-none rounded-xl border ${errors.description ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
                 placeholder="What is this study list about?"
               />
               {errors.description && (
@@ -142,7 +142,7 @@ export function CreateStudyListModal({
             <button
               type="button"
               onClick={() => setIsPublic(true)}
-              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${isPublic ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${isPublic ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
               <Globe className="h-3.5 w-3.5" />
               Public
@@ -150,7 +150,7 @@ export function CreateStudyListModal({
             <button
               type="button"
               onClick={() => setIsPublic(false)}
-              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${!isPublic ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${!isPublic ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
               <Lock className="h-3.5 w-3.5" />
               Private

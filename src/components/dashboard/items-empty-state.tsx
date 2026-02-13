@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui";
-import { ClipboardList, Plus } from "lucide-react";
+import { Button } from '@/components/ui';
+import { ClipboardList, Plus } from 'lucide-react';
 
 interface ItemsEmptyStateProps {
   onCreateClick: () => void;

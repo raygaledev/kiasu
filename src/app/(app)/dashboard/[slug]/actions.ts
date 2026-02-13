@@ -1,9 +1,9 @@
-"use server";
+'use server';
 
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma/client";
-import { studyItemSchema } from "@/lib/validations/schemas";
-import { revalidatePath } from "next/cache";
+import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/prisma/client';
+import { studyItemSchema } from '@/lib/validations/schemas';
+import { revalidatePath } from 'next/cache';
 
 export async function createStudyItem(
   studyListId: string,
@@ -16,7 +16,7 @@ export async function createStudyItem(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    return { error: 'Not authenticated' };
   }
 
   // Verify ownership
@@ -25,17 +25,17 @@ export async function createStudyItem(
   });
 
   if (!list) {
-    return { error: "Study list not found" };
+    return { error: 'Study list not found' };
   }
 
   const parsed = studyItemSchema.safeParse({
-    title: (formData.get("title") as string) ?? "",
-    url: (formData.get("url") as string) ?? "",
-    notes: (formData.get("notes") as string) ?? "",
+    title: (formData.get('title') as string) ?? '',
+    url: (formData.get('url') as string) ?? '',
+    notes: (formData.get('notes') as string) ?? '',
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
+    return { error: parsed.error.issues[0]?.message ?? 'Validation failed' };
   }
 
   const { title, url, notes } = parsed.data;
@@ -43,7 +43,7 @@ export async function createStudyItem(
   // Get next position
   const lastItem = await prisma.studyItem.findFirst({
     where: { studyListId },
-    orderBy: { position: "desc" },
+    orderBy: { position: 'desc' },
   });
 
   await prisma.studyItem.create({
@@ -57,7 +57,7 @@ export async function createStudyItem(
   });
 
   revalidatePath(`/dashboard/${slug}`);
-  revalidatePath("/dashboard");
+  revalidatePath('/dashboard');
   return { success: true };
 }
 
@@ -68,7 +68,7 @@ export async function toggleStudyItem(itemId: string, slug: string) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    return { error: 'Not authenticated' };
   }
 
   const item = await prisma.studyItem.findUnique({
@@ -77,7 +77,7 @@ export async function toggleStudyItem(itemId: string, slug: string) {
   });
 
   if (!item || item.studyList.userId !== user.id) {
-    return { error: "Item not found" };
+    return { error: 'Item not found' };
   }
 
   await prisma.studyItem.update({
@@ -86,7 +86,7 @@ export async function toggleStudyItem(itemId: string, slug: string) {
   });
 
   revalidatePath(`/dashboard/${slug}`);
-  revalidatePath("/dashboard");
+  revalidatePath('/dashboard');
   return { success: true };
 }
 
@@ -97,7 +97,7 @@ export async function deleteStudyItem(itemId: string, slug: string) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    return { error: 'Not authenticated' };
   }
 
   const item = await prisma.studyItem.findUnique({
@@ -106,13 +106,13 @@ export async function deleteStudyItem(itemId: string, slug: string) {
   });
 
   if (!item || item.studyList.userId !== user.id) {
-    return { error: "Item not found" };
+    return { error: 'Item not found' };
   }
 
   await prisma.studyItem.delete({ where: { id: itemId } });
 
   revalidatePath(`/dashboard/${slug}`);
-  revalidatePath("/dashboard");
+  revalidatePath('/dashboard');
   return { success: true };
 }
 
@@ -127,7 +127,7 @@ export async function updateStudyItem(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    return { error: 'Not authenticated' };
   }
 
   const item = await prisma.studyItem.findUnique({
@@ -136,17 +136,17 @@ export async function updateStudyItem(
   });
 
   if (!item || item.studyList.userId !== user.id) {
-    return { error: "Item not found" };
+    return { error: 'Item not found' };
   }
 
   const parsed = studyItemSchema.safeParse({
-    title: (formData.get("title") as string) ?? "",
-    url: (formData.get("url") as string) ?? "",
-    notes: (formData.get("notes") as string) ?? "",
+    title: (formData.get('title') as string) ?? '',
+    url: (formData.get('url') as string) ?? '',
+    notes: (formData.get('notes') as string) ?? '',
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
+    return { error: parsed.error.issues[0]?.message ?? 'Validation failed' };
   }
 
   const { title, url, notes } = parsed.data;
@@ -175,7 +175,7 @@ export async function reorderStudyItems(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    return { error: 'Not authenticated' };
   }
 
   // Verify the study list belongs to the user
@@ -184,7 +184,7 @@ export async function reorderStudyItems(
   });
 
   if (!list) {
-    return { error: "Study list not found" };
+    return { error: 'Study list not found' };
   }
 
   // Verify all item IDs belong to this study list
@@ -195,7 +195,7 @@ export async function reorderStudyItems(
 
   const listItemIds = new Set(items.map((i) => i.id));
   if (orderedIds.some((id) => !listItemIds.has(id))) {
-    return { error: "Invalid item ID" };
+    return { error: 'Invalid item ID' };
   }
 
   await prisma.$transaction(

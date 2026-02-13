@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui";
-import { ArrowLeft, Lock, Plus, Share2 } from "lucide-react";
-import { toast } from "sonner";
-import Link from "next/link";
+import { Button } from '@/components/ui';
+import { ArrowLeft, Lock, Plus, Share2 } from 'lucide-react';
+import { toast } from 'sonner';
+import Link from 'next/link';
 
 interface StudyListHeaderProps {
   title: string;
@@ -22,7 +22,7 @@ export function StudyListHeader({
 }: StudyListHeaderProps) {
   const handleShare = () => {
     navigator.clipboard.writeText(`${window.location.origin}/share/${listId}`);
-    toast.success("Link copied to clipboard");
+    toast.success('Link copied to clipboard');
   };
 
   return (

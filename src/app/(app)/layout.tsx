@@ -1,6 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma/client";
-import { redirect } from "next/navigation";
+import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/prisma/client';
+import { redirect } from 'next/navigation';
 
 export default async function AppLayout({
   children,
@@ -13,7 +13,7 @@ export default async function AppLayout({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect('/login');
   }
 
   // Ensure user exists in our database
@@ -35,7 +35,7 @@ export default async function AppLayout({
   });
 
   if (!dbUser.username) {
-    redirect("/choose-username");
+    redirect('/choose-username');
   }
 
   return <>{children}</>;

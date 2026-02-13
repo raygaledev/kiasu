@@ -1,20 +1,20 @@
-"use server";
+'use server';
 
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma/client";
-import { usernameSchema } from "@/lib/validations/schemas";
+import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/prisma/client';
+import { usernameSchema } from '@/lib/validations/schemas';
 
 export async function checkUsernameAvailability(username: string) {
   const parsed = usernameSchema.safeParse(username);
   if (!parsed.success) {
     return {
       available: false,
-      error: parsed.error.issues[0]?.message ?? "Invalid username",
+      error: parsed.error.issues[0]?.message ?? 'Invalid username',
     };
   }
 
   const existing = await prisma.user.findFirst({
-    where: { username: { equals: parsed.data, mode: "insensitive" } },
+    where: { username: { equals: parsed.data, mode: 'insensitive' } },
   });
 
   return { available: !existing, error: null };
@@ -23,13 +23,13 @@ export async function checkUsernameAvailability(username: string) {
 export async function resolveUsernameToEmail(username: string) {
   const user = await prisma.user.findFirst({
     where: {
-      username: { equals: username.toLowerCase(), mode: "insensitive" },
+      username: { equals: username.toLowerCase(), mode: 'insensitive' },
     },
     select: { email: true },
   });
 
   if (!user) {
-    return { email: null, error: "No account found with that username" };
+    return { email: null, error: 'No account found with that username' };
   }
 
   return { email: user.email, error: null };
@@ -42,23 +42,23 @@ export async function setUsername(username: string) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    return { error: 'Not authenticated' };
   }
 
   const parsed = usernameSchema.safeParse(username);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid username" };
+    return { error: parsed.error.issues[0]?.message ?? 'Invalid username' };
   }
 
   const existing = await prisma.user.findFirst({
     where: {
-      username: { equals: parsed.data, mode: "insensitive" },
+      username: { equals: parsed.data, mode: 'insensitive' },
       id: { not: user.id },
     },
   });
 
   if (existing) {
-    return { error: "Username is already taken" };
+    return { error: 'Username is already taken' };
   }
 
   await prisma.user.update({

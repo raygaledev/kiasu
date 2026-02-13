@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui";
-import { studyListSchema } from "@/lib/validations/schemas";
-import { CATEGORIES } from "@/lib/categories";
-import { X, Trash2, Globe, Lock, ChevronDown } from "lucide-react";
-import { useState, type FormEvent } from "react";
-import type { StudyListWithItemCount } from "@/types";
+import { Button } from '@/components/ui';
+import { studyListSchema } from '@/lib/validations/schemas';
+import { CATEGORIES } from '@/lib/categories';
+import { X, Trash2, Globe, Lock, ChevronDown } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
+import type { StudyListWithItemCount } from '@/types';
 
 interface EditStudyListModalProps {
   open: boolean;
@@ -33,9 +33,9 @@ export function EditStudyListModal({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const result = studyListSchema.safeParse({
-      title: formData.get("title") as string,
-      description: formData.get("description") as string,
-      category: formData.get("category") as string,
+      title: formData.get('title') as string,
+      description: formData.get('description') as string,
+      category: formData.get('category') as string,
     });
 
     if (!result.success) {
@@ -96,7 +96,7 @@ export function EditStudyListModal({
                 type="text"
                 autoFocus
                 defaultValue={list.title}
-                className={`mt-1 block w-full rounded-xl border ${errors.title ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                className={`mt-1 block w-full rounded-xl border ${errors.title ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
               />
               {errors.title && (
                 <p className="mt-1 text-xs text-destructive">{errors.title}</p>
@@ -115,7 +115,7 @@ export function EditStudyListModal({
                   name="category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className={`block w-full appearance-none rounded-xl border ${errors.category ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 pr-8 text-sm focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                  className={`block w-full appearance-none rounded-xl border ${errors.category ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 pr-8 text-sm focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat.value} value={cat.value}>
@@ -142,8 +142,8 @@ export function EditStudyListModal({
                 id="edit-description"
                 name="description"
                 rows={3}
-                defaultValue={list.description ?? ""}
-                className={`mt-1 block w-full resize-none rounded-xl border ${errors.description ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                defaultValue={list.description ?? ''}
+                className={`mt-1 block w-full resize-none rounded-xl border ${errors.description ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
                 placeholder="What is this study list about?"
               />
               {errors.description && (
@@ -158,7 +158,7 @@ export function EditStudyListModal({
             <button
               type="button"
               onClick={() => setIsPublic(true)}
-              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${isPublic ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${isPublic ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
               <Globe className="h-3.5 w-3.5" />
               Public
@@ -166,7 +166,7 @@ export function EditStudyListModal({
             <button
               type="button"
               onClick={() => setIsPublic(false)}
-              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${!isPublic ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${!isPublic ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
               <Lock className="h-3.5 w-3.5" />
               Private
@@ -176,8 +176,8 @@ export function EditStudyListModal({
             <div className="space-y-3 rounded-xl border border-destructive/20 bg-destructive/5 p-3">
               <p className="text-sm text-destructive">
                 This will permanently delete <strong>{list.title}</strong> and
-                all {list._count.items}{" "}
-                {list._count.items === 1 ? "item" : "items"} inside it. This
+                all {list._count.items}{' '}
+                {list._count.items === 1 ? 'item' : 'items'} inside it. This
                 cannot be undone.
               </p>
               <div className="flex justify-end gap-3">

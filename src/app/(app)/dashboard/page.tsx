@@ -1,7 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma/client";
-import { Container } from "@/components/ui";
-import { StudyListGrid } from "@/components/dashboard/study-list-grid";
+import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/prisma/client';
+import { Container } from '@/components/ui';
+import { StudyListGrid } from '@/components/dashboard/study-list-grid';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   const studyLists = await prisma.studyList.findMany({
     where: { userId: user!.id },
     include: { _count: { select: { items: true } } },
-    orderBy: { position: "asc" },
+    orderBy: { position: 'asc' },
   });
 
   return (

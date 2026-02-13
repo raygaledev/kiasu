@@ -1,7 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma/client";
-import { redirect } from "next/navigation";
-import { ChooseUsernameForm } from "@/components/auth";
+import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/prisma/client';
+import { redirect } from 'next/navigation';
+import { ChooseUsernameForm } from '@/components/auth';
 
 export default async function ChooseUsernamePage() {
   const supabase = await createClient();
@@ -10,7 +10,7 @@ export default async function ChooseUsernamePage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect('/login');
   }
 
   // If user already has a username, send them to the dashboard
@@ -20,7 +20,7 @@ export default async function ChooseUsernamePage() {
   });
 
   if (dbUser?.username) {
-    redirect("/dashboard");
+    redirect('/dashboard');
   }
 
   return (

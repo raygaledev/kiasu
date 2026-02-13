@@ -10,10 +10,10 @@ import {
   User,
   BookOpen,
   type LucideIcon,
-} from "lucide-react";
-import { type Category } from "./category-values";
+} from 'lucide-react';
+import { type Category } from './category-values';
 
-export { CATEGORY_VALUES, type Category } from "./category-values";
+export { CATEGORY_VALUES, type Category } from './category-values';
 
 const ICON_MAP: Record<Category, LucideIcon> = {
   programming: Code,

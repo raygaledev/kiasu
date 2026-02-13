@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui";
-import { studyItemSchema } from "@/lib/validations/schemas";
-import { X } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
+import { Button } from '@/components/ui';
+import { studyItemSchema } from '@/lib/validations/schemas';
+import { X } from 'lucide-react';
+import { useRef, useState, type FormEvent } from 'react';
 
 interface CreateItemModalProps {
   open: boolean;
@@ -25,9 +25,9 @@ export function CreateItemModal({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const result = studyItemSchema.safeParse({
-      title: formData.get("title") as string,
-      url: formData.get("url") as string,
-      notes: formData.get("notes") as string,
+      title: formData.get('title') as string,
+      url: formData.get('url') as string,
+      notes: formData.get('notes') as string,
     });
 
     if (!result.success) {
@@ -75,7 +75,7 @@ export function CreateItemModal({
                 name="title"
                 type="text"
                 autoFocus
-                className={`mt-1 block w-full rounded-xl border ${errors.title ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                className={`mt-1 block w-full rounded-xl border ${errors.title ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
                 placeholder="e.g. Read Chapter 3"
               />
               {errors.title && (
@@ -90,7 +90,7 @@ export function CreateItemModal({
                 id="item-url"
                 name="url"
                 type="text"
-                className={`mt-1 block w-full rounded-xl border ${errors.url ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                className={`mt-1 block w-full rounded-xl border ${errors.url ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
                 placeholder="https://..."
               />
               {errors.url && (
@@ -105,7 +105,7 @@ export function CreateItemModal({
                 id="item-notes"
                 name="notes"
                 rows={3}
-                className={`mt-1 block w-full resize-none rounded-xl border ${errors.notes ? "border-destructive" : "border-border/50"} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                className={`mt-1 block w-full resize-none rounded-xl border ${errors.notes ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
                 placeholder="Any extra notes..."
               />
               {errors.notes && (

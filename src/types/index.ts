@@ -47,14 +47,14 @@ export type OptimisticStudyListWithItemCount = StudyListWithItemCount & {
 };
 
 export type StudyItemAction =
-  | { type: "create"; item: OptimisticStudyItem }
-  | { type: "toggle"; itemId: string }
-  | { type: "delete"; itemId: string }
-  | { type: "update"; itemId: string; data: Partial<StudyItem> }
-  | { type: "reorder"; orderedIds: string[] };
+  | { type: 'create'; item: OptimisticStudyItem }
+  | { type: 'toggle'; itemId: string }
+  | { type: 'delete'; itemId: string }
+  | { type: 'update'; itemId: string; data: Partial<StudyItem> }
+  | { type: 'reorder'; orderedIds: string[] };
 
 export type StudyListAction =
-  | { type: "create"; list: OptimisticStudyListWithItemCount }
-  | { type: "update"; listId: string; data: Partial<StudyList> }
-  | { type: "delete"; listId: string }
-  | { type: "reorder"; orderedIds: string[] };
+  | { type: 'create'; list: OptimisticStudyListWithItemCount }
+  | { type: 'update'; listId: string; data: Partial<StudyList> }
+  | { type: 'delete'; listId: string }
+  | { type: 'reorder'; orderedIds: string[] };

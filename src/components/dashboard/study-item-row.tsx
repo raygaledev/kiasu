@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { EditItemModal } from "./edit-item-modal";
+import { EditItemModal } from './edit-item-modal';
 import {
   ChevronDown,
   ChevronUp,
   GripVertical,
   Pencil,
   Trash2,
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import type { OptimisticStudyItem } from "@/types";
-import { cn } from "@/lib/utils";
-import { UrlIcon } from "@/components/ui/url-icon";
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import type { OptimisticStudyItem } from '@/types';
+import { cn } from '@/lib/utils';
+import { UrlIcon } from '@/components/ui/url-icon';
 
 interface StudyItemRowProps {
   item: OptimisticStudyItem;
@@ -61,10 +61,10 @@ export function StudyItemRow({
         ref={setNodeRef}
         style={style}
         className={cn(
-          "flex items-center gap-3 rounded-xl border border-border/50 p-4 transition-all duration-200 hover:border-border hover:bg-muted/50",
-          item.completed && "opacity-50",
-          item.pending && "pointer-events-none opacity-70",
-          isDragging && "z-50 opacity-80",
+          'flex items-center gap-3 rounded-xl border border-border/50 p-4 transition-all duration-200 hover:border-border hover:bg-muted/50',
+          item.completed && 'opacity-50',
+          item.pending && 'pointer-events-none opacity-70',
+          isDragging && 'z-50 opacity-80',
         )}
       >
         <button
@@ -100,14 +100,14 @@ export function StudyItemRow({
             >
               <UrlIcon url={item.url} />
               <p
-                className={`text-sm font-medium ${item.completed ? "text-muted-foreground line-through" : ""}`}
+                className={`text-sm font-medium ${item.completed ? 'text-muted-foreground line-through' : ''}`}
               >
                 {item.title}
               </p>
             </a>
           ) : (
             <p
-              className={`text-sm font-medium ${item.completed ? "text-muted-foreground line-through" : ""}`}
+              className={`text-sm font-medium ${item.completed ? 'text-muted-foreground line-through' : ''}`}
             >
               {item.title}
             </p>
@@ -117,8 +117,8 @@ export function StudyItemRow({
               <p
                 ref={notesRef}
                 className={cn(
-                  "text-xs text-muted-foreground",
-                  !expanded && "truncate",
+                  'text-xs text-muted-foreground',
+                  !expanded && 'truncate',
                 )}
               >
                 {item.notes}

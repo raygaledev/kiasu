@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useUser } from "@/hooks/use-user";
-import { Button, Container } from "@/components/ui";
-import { UserMenu } from "@/components/auth";
-import { BookOpen } from "lucide-react";
-import Link from "next/link";
+import { useUser } from '@/hooks/use-user';
+import { Button, Container } from '@/components/ui';
+import { UserMenu } from '@/components/auth';
+import { BookOpen } from 'lucide-react';
+import Link from 'next/link';
 
 export function Header() {
   const { user, loading } = useUser();
@@ -13,7 +13,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/60 backdrop-blur-xl">
       <Container className="flex h-16 items-center justify-between">
         <Link
-          href={user ? "/dashboard" : "/"}
+          href={user ? '/dashboard' : '/'}
           className="flex items-center gap-2 transition-opacity duration-200 hover:opacity-80"
         >
           <BookOpen className="h-6 w-6 text-primary" />

@@ -1,5 +1,5 @@
-import { AuthForm } from "@/components/auth";
-import { Container } from "@/components/ui";
+import { AuthForm } from '@/components/auth';
+import { Container } from '@/components/ui';
 
 export default function LoginPage() {
   return (

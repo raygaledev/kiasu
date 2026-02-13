@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button, Container } from "@/components/ui";
+import { Button, Container } from '@/components/ui';
 
 export default function Error({
   reset,
