@@ -30,13 +30,17 @@ export function ChooseUsernameForm() {
     if (username.length < 3) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
-      const result = await checkUsernameAvailability(username);
-      if (result.error) {
+      try {
+        const result = await checkUsernameAvailability(username);
+        if (result.error) {
+          setUsernameStatus('idle');
+          setError(result.error);
+        } else {
+          setUsernameStatus(result.available ? 'available' : 'taken');
+          setError(null);
+        }
+      } catch {
         setUsernameStatus('idle');
-        setError(result.error);
-      } else {
-        setUsernameStatus(result.available ? 'available' : 'taken');
-        setError(null);
       }
     }, 400);
     return () => {

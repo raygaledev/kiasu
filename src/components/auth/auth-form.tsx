@@ -46,17 +46,21 @@ export function AuthForm({ mode }: AuthFormProps) {
     if (isLogin || username.length < 3) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
-      const result = await checkUsernameAvailability(username);
-      if (result.error) {
+      try {
+        const result = await checkUsernameAvailability(username);
+        if (result.error) {
+          setUsernameStatus('idle');
+          setErrors((prev) => ({ ...prev, username: result.error! }));
+        } else {
+          setUsernameStatus(result.available ? 'available' : 'taken');
+          setErrors((prev) => {
+            const next = { ...prev };
+            delete next.username;
+            return next;
+          });
+        }
+      } catch {
         setUsernameStatus('idle');
-        setErrors((prev) => ({ ...prev, username: result.error! }));
-      } else {
-        setUsernameStatus(result.available ? 'available' : 'taken');
-        setErrors((prev) => {
-          const next = { ...prev };
-          delete next.username;
-          return next;
-        });
       }
     }, 400);
     return () => {
