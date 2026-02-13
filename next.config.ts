@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '*.supabase.co' },
     ],
   },
+  outputFileTracingIncludes: {
+    '/**': ['./src/generated/prisma/*.node'],
+  },
 };
 
 export default nextConfig;
