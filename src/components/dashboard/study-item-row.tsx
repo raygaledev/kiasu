@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import { EditItemModal } from './edit-item-modal';
-import { ChevronDown, ChevronUp, GripVertical, Pencil, Trash2 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import type { OptimisticStudyItem } from '@/types';
-import { cn } from '@/lib/utils';
-import { UrlIcon } from '@/components/ui/url-icon';
+import { EditItemModal } from "./edit-item-modal";
+import {
+  ChevronDown,
+  ChevronUp,
+  GripVertical,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import type { OptimisticStudyItem } from "@/types";
+import { cn } from "@/lib/utils";
+import { UrlIcon } from "@/components/ui/url-icon";
 
 interface StudyItemRowProps {
   item: OptimisticStudyItem;
@@ -55,84 +61,84 @@ export function StudyItemRow({
         ref={setNodeRef}
         style={style}
         className={cn(
-          'flex items-center gap-3 rounded-xl border border-border/50 p-4 transition-all duration-200 hover:border-border hover:bg-muted/50',
-          item.completed && 'opacity-50',
-          item.pending && 'pointer-events-none opacity-70',
-          isDragging && 'z-50 opacity-80',
+          "flex items-center gap-3 rounded-xl border border-border/50 p-4 transition-all duration-200 hover:border-border hover:bg-muted/50",
+          item.completed && "opacity-50",
+          item.pending && "pointer-events-none opacity-70",
+          isDragging && "z-50 opacity-80",
         )}
       >
         <button
           onClick={onToggle}
-          className='flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded border border-border transition-all duration-200 data-[checked=true]:border-primary data-[checked=true]:bg-primary'
+          className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded border border-border transition-all duration-200 data-[checked=true]:border-primary data-[checked=true]:bg-primary"
           data-checked={item.completed}
         >
           {item.completed ? (
             <svg
-              className='h-3 w-3 text-primary-foreground'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
+              className="h-3 w-3 text-primary-foreground"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
               strokeWidth={3}
             >
               <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M5 13l4 4L19 7'
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
               />
             </svg>
           ) : null}
         </button>
 
-        <div className='min-w-0 flex-1'>
+        <div className="min-w-0 flex-1">
           {item.url ? (
             <a
               href={item.url}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='flex items-center gap-1.5 text-foreground transition-colors duration-200 hover:text-primary'
-              onClick={e => e.stopPropagation()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-foreground transition-colors duration-200 hover:text-primary"
+              onClick={(e) => e.stopPropagation()}
             >
               <UrlIcon url={item.url} />
               <p
-                className={`text-sm font-medium ${item.completed ? 'text-muted-foreground line-through' : ''}`}
+                className={`text-sm font-medium ${item.completed ? "text-muted-foreground line-through" : ""}`}
               >
                 {item.title}
               </p>
             </a>
           ) : (
             <p
-              className={`text-sm font-medium ${item.completed ? 'text-muted-foreground line-through' : ''}`}
+              className={`text-sm font-medium ${item.completed ? "text-muted-foreground line-through" : ""}`}
             >
               {item.title}
             </p>
           )}
           {item.notes && (
-            <div className='mt-1.5'>
+            <div className="mt-1.5">
               <p
                 ref={notesRef}
                 className={cn(
-                  'text-xs text-muted-foreground',
-                  !expanded && 'truncate',
+                  "text-xs text-muted-foreground",
+                  !expanded && "truncate",
                 )}
               >
                 {item.notes}
               </p>
               {isOverflowing && (
                 <button
-                  onClick={e => {
+                  onClick={(e) => {
                     e.stopPropagation();
-                    setExpanded(prev => !prev);
+                    setExpanded((prev) => !prev);
                   }}
-                  className='mt-2 flex w-full cursor-pointer items-center justify-center gap-0.5 text-xs text-muted-foreground transition-colors hover:text-foreground'
+                  className="mt-2 flex w-full cursor-pointer items-center justify-center gap-0.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {expanded ? (
                     <>
-                      <ChevronUp className='h-3 w-3' />
+                      <ChevronUp className="h-3 w-3" />
                       Show less
                     </>
                   ) : (
                     <>
-                      <ChevronDown className='h-3 w-3' />
+                      <ChevronDown className="h-3 w-3" />
                       Show more
                     </>
                   )}
@@ -143,25 +149,25 @@ export function StudyItemRow({
         </div>
 
         {!readOnly && (
-          <div className='flex shrink-0 items-center gap-1'>
+          <div className="flex shrink-0 items-center gap-1">
             <button
               {...attributes}
               {...listeners}
-              className='cursor-grab rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground active:cursor-grabbing'
+              className="cursor-grab rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground active:cursor-grabbing"
             >
-              <GripVertical className='h-4 w-4' />
+              <GripVertical className="h-4 w-4" />
             </button>
             <button
               onClick={() => setEditOpen(true)}
-              className='cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground'
+              className="cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
             >
-              <Pencil className='h-4 w-4' />
+              <Pencil className="h-4 w-4" />
             </button>
             <button
               onClick={onDelete}
-              className='cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-destructive'
+              className="cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-destructive"
             >
-              <Trash2 className='h-4 w-4' />
+              <Trash2 className="h-4 w-4" />
             </button>
           </div>
         )}

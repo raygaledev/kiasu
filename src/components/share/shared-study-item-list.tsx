@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { StudyItem } from '@/types';
-import { StudyItemRow } from '@/components/dashboard/study-item-row';
-import { ProgressBar } from '@/components/ui/progress-bar';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { StudyItem } from "@/types";
+import { StudyItemRow } from "@/components/dashboard/study-item-row";
+import { ProgressBar } from "@/components/ui/progress-bar";
 
 interface SharedStudyItemListProps {
   listId: string;
@@ -41,7 +41,7 @@ export function SharedStudyItemList({
 
   const toggle = useCallback(
     (itemId: string) => {
-      setCheckedIds(prev => {
+      setCheckedIds((prev) => {
         const next = new Set(prev);
         if (next.has(itemId)) {
           next.delete(itemId);
@@ -66,16 +66,16 @@ export function SharedStudyItemList({
   return (
     <>
       <div>
-        <h1 className='text-2xl font-bold'>{title}</h1>
+        <h1 className="text-2xl font-bold">{title}</h1>
         {description && (
-          <p className='mt-1 text-muted-foreground'>{description}</p>
+          <p className="mt-1 text-muted-foreground">{description}</p>
         )}
       </div>
 
-      <ProgressBar value={progress} label='Progress' className='mt-6' />
+      <ProgressBar value={progress} label="Progress" className="mt-6" />
 
-      <div className='mt-6 space-y-2'>
-        {items.map(item => (
+      <div className="mt-6 space-y-2">
+        {items.map((item) => (
           <StudyItemRow
             key={item.id}
             item={{ ...item, completed: checkedIds.has(item.id) }}

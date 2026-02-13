@@ -88,10 +88,7 @@ export function CreateStudyListModal({
               )}
             </div>
             <div>
-              <label
-                htmlFor="category"
-                className="block text-sm font-medium"
-              >
+              <label htmlFor="category" className="block text-sm font-medium">
                 Category <span className="text-destructive">*</span>
               </label>
               <div className="relative mt-1">

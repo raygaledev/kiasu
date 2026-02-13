@@ -49,7 +49,11 @@ export function UserMenu() {
       {open && (
         <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border/50 bg-card p-2 shadow-2xl">
           <div className="mb-1 border-b border-border/50 px-3 py-2">
-            <p className="truncate text-sm font-medium">{name}</p>
+            <p className="truncate text-sm font-medium">
+              {user.user_metadata?.username
+                ? user.user_metadata.username
+                : name}
+            </p>
             <p className="truncate text-xs text-muted-foreground">
               {user.email}
             </p>

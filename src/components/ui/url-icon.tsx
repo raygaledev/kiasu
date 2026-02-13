@@ -121,9 +121,7 @@ function getIconForUrl(url: string): React.ReactNode | null {
   try {
     const hostname = new URL(url).hostname.replace(/^www\./, "");
     const match = platforms.find((p) =>
-      p.hostnames.some(
-        (h) => hostname === h || hostname.endsWith("." + h),
-      ),
+      p.hostnames.some((h) => hostname === h || hostname.endsWith("." + h)),
     );
     return match?.icon ?? <Globe className={iconClass} />;
   } catch {

@@ -1,8 +1,10 @@
 export interface User {
   id: string;
   email: string;
+  username: string | null;
   name: string | null;
   avatarUrl: string | null;
+  profilePictureUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

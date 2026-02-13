@@ -17,7 +17,7 @@ export default async function AppLayout({
   }
 
   // Ensure user exists in our database
-  await prisma.user.upsert({
+  const dbUser = await prisma.user.upsert({
     where: { id: user.id },
     update: {
       email: user.email!,
@@ -27,10 +27,16 @@ export default async function AppLayout({
     create: {
       id: user.id,
       email: user.email!,
+      username: user.user_metadata?.username ?? null,
       name: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
       avatarUrl: user.user_metadata?.avatar_url ?? null,
     },
+    select: { username: true },
   });
+
+  if (!dbUser.username) {
+    redirect("/choose-username");
+  }
 
   return <>{children}</>;
 }

@@ -11,8 +11,9 @@ export const studyListSchema = z.object({
   description: safeText.pipe(z.string().max(1000)).optional().or(z.literal("")),
   category: z
     .string()
-    .refine((val): val is (typeof CATEGORY_VALUES)[number] =>
-      CATEGORY_VALUES.includes(val as (typeof CATEGORY_VALUES)[number]),
+    .refine(
+      (val): val is (typeof CATEGORY_VALUES)[number] =>
+        CATEGORY_VALUES.includes(val as (typeof CATEGORY_VALUES)[number]),
       { message: "Category is required" },
     ),
 });
@@ -29,9 +30,28 @@ export const studyItemSchema = z.object({
   notes: safeText.pipe(z.string().max(2000)).optional().or(z.literal("")),
 });
 
+export const usernameSchema = z
+  .string()
+  .trim()
+  .min(3, "Username must be at least 3 characters")
+  .max(20, "Username must be at most 20 characters")
+  .regex(
+    /^[a-zA-Z0-9_]+$/,
+    "Username can only contain letters, numbers, and underscores",
+  )
+  .transform((s) => s.toLowerCase());
+
 export const loginSchema = z.object({
-  email: z.string().trim().email("Must be a valid email"),
+  identifier: z.string().trim().min(1, "Email or username is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-export const signupSchema = loginSchema;
+export const signupSchema = z.object({
+  email: z.string().trim().email("Must be a valid email"),
+  username: usernameSchema,
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+export const chooseUsernameSchema = z.object({
+  username: usernameSchema,
+});
