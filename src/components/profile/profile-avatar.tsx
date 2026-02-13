@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { Camera } from 'lucide-react';
 import { toast } from 'sonner';
 import { Avatar } from '@/components/ui';
@@ -15,6 +15,11 @@ export function ProfileAvatar({ src, name }: ProfileAvatarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Clear the local preview once the server `src` prop updates after revalidation
+  useEffect(() => {
+    setPreview(null);
+  }, [src]);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -34,8 +39,10 @@ export function ProfileAvatar({ src, name }: ProfileAvatarProps) {
         URL.revokeObjectURL(objectUrl);
         toast.error(result.error);
       } else {
+        // Don't clear the preview here — keep it visible until the
+        // server-provided `src` prop catches up via revalidation.
+        // Clearing it now would briefly flash the old image.
         URL.revokeObjectURL(objectUrl);
-        setPreview(null);
       }
     });
 
