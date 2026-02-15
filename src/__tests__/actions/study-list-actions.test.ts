@@ -254,7 +254,7 @@ describe('updateStudyList', () => {
     mockPrisma.studyList.findFirst.mockResolvedValue(TEST_STUDY_LIST);
     mockPrisma.studyList.update.mockResolvedValue(TEST_STUDY_LIST);
 
-    await updateStudyList(
+    const result = await updateStudyList(
       createFormData({
         id: 'list-1',
         title: 'My Study List',
@@ -263,6 +263,7 @@ describe('updateStudyList', () => {
       }),
     );
 
+    expect(result).toEqual({ success: true, slug: 'my-study-list' });
     expect(mockPrisma.studyList.update).toHaveBeenCalledWith({
       where: { id: 'list-1' },
       data: expect.objectContaining({
@@ -278,7 +279,7 @@ describe('updateStudyList', () => {
       .mockResolvedValueOnce(null); // slug uniqueness check
     mockPrisma.studyList.update.mockResolvedValue(TEST_STUDY_LIST);
 
-    await updateStudyList(
+    const result = await updateStudyList(
       createFormData({
         id: 'list-1',
         title: 'New Title',
@@ -286,6 +287,7 @@ describe('updateStudyList', () => {
       }),
     );
 
+    expect(result).toEqual({ success: true, slug: 'new-title' });
     expect(mockPrisma.studyList.update).toHaveBeenCalledWith({
       where: { id: 'list-1' },
       data: expect.objectContaining({
@@ -345,7 +347,7 @@ describe('updateStudyList', () => {
     const now = Date.now();
     vi.spyOn(Date, 'now').mockReturnValue(now);
 
-    await updateStudyList(
+    const result = await updateStudyList(
       createFormData({
         id: 'list-1',
         title: 'New Title',
@@ -353,6 +355,7 @@ describe('updateStudyList', () => {
       }),
     );
 
+    expect(result).toEqual({ success: true, slug: `new-title-${now}` });
     expect(mockPrisma.studyList.update).toHaveBeenCalledWith({
       where: { id: 'list-1' },
       data: expect.objectContaining({
@@ -361,6 +364,44 @@ describe('updateStudyList', () => {
     });
 
     vi.restoreAllMocks();
+  });
+
+  it('revalidates old and new slug paths when slug changes', async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findFirst
+      .mockResolvedValueOnce(TEST_STUDY_LIST) // ownership check
+      .mockResolvedValueOnce(null); // slug uniqueness check
+    mockPrisma.studyList.update.mockResolvedValue(TEST_STUDY_LIST);
+
+    await updateStudyList(
+      createFormData({
+        id: 'list-1',
+        title: 'New Title',
+        category: 'programming',
+      }),
+    );
+
+    expect(mockRevalidatePath).toHaveBeenCalledWith('/dashboard');
+    expect(mockRevalidatePath).toHaveBeenCalledWith('/dashboard/my-study-list');
+    expect(mockRevalidatePath).toHaveBeenCalledWith('/dashboard/new-title');
+  });
+
+  it('revalidates slug path even when slug stays the same', async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findFirst.mockResolvedValue(TEST_STUDY_LIST);
+    mockPrisma.studyList.update.mockResolvedValue(TEST_STUDY_LIST);
+
+    await updateStudyList(
+      createFormData({
+        id: 'list-1',
+        title: 'My Study List',
+        description: 'Updated desc',
+        category: 'programming',
+      }),
+    );
+
+    expect(mockRevalidatePath).toHaveBeenCalledWith('/dashboard');
+    expect(mockRevalidatePath).toHaveBeenCalledWith('/dashboard/my-study-list');
   });
 });
 

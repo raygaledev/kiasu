@@ -122,7 +122,11 @@ export async function updateStudyList(formData: FormData) {
   });
 
   revalidatePath('/dashboard');
-  return { success: true };
+  revalidatePath(`/dashboard/${existing.slug}`);
+  if (slug !== existing.slug) {
+    revalidatePath(`/dashboard/${slug}`);
+  }
+  return { success: true, slug };
 }
 
 export async function deleteStudyList(id: string) {

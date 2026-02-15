@@ -1,6 +1,7 @@
 'use client';
 
 import { useOptimistic, useTransition, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
   DndContext,
@@ -26,11 +27,16 @@ import {
   updateStudyItem,
   reorderStudyItems,
 } from '@/app/(app)/dashboard/[slug]/actions';
+import {
+  updateStudyList,
+  deleteStudyList,
+} from '@/app/(app)/dashboard/actions';
 import { ProgressBar } from '@/components/ui';
 import { StudyListHeader } from './study-list-header';
 import { ItemsEmptyState } from './items-empty-state';
 import { StudyItemRow } from './study-item-row';
 import { CreateItemModal } from './create-item-modal';
+import { EditStudyListModal } from './edit-study-list-modal';
 import type { StudyItem, OptimisticStudyItem, StudyItemAction } from '@/types';
 
 interface StudyItemListProps {
@@ -40,6 +46,7 @@ interface StudyItemListProps {
   title: string;
   description: string | null;
   isPublic: boolean;
+  category: string;
 }
 
 function itemReducer(
@@ -75,11 +82,40 @@ export function StudyItemList({
   title,
   description,
   isPublic,
+  category,
 }: StudyItemListProps) {
   const [, startTransition] = useTransition();
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [optimisticItems, dispatch] = useOptimistic(items, itemReducer);
+  const router = useRouter();
+
+  const handleEditStudyList = async (formData: FormData) => {
+    try {
+      const result = await updateStudyList(formData);
+      if (result.error) {
+        toast.error(result.error);
+      } else if (result.slug && result.slug !== slug) {
+        router.replace(`/dashboard/${result.slug}`);
+      }
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+    }
+  };
+
+  const handleDeleteStudyList = async () => {
+    try {
+      const result = await deleteStudyList(studyListId);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        router.replace('/dashboard');
+      }
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+    }
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -202,6 +238,7 @@ export function StudyItemList({
         listId={studyListId}
         isPublic={isPublic}
         onCreateClick={() => setCreateModalOpen(true)}
+        onEditClick={() => setEditModalOpen(true)}
       />
 
       {total > 0 && (
@@ -257,6 +294,29 @@ export function StudyItemList({
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreate}
+      />
+
+      <EditStudyListModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        list={{
+          id: studyListId,
+          title,
+          description,
+          slug,
+          category,
+          isPublic,
+          position: 0,
+          userId: '',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          _count: {
+            items: optimisticItems.length,
+            completedItems: optimisticItems.filter((i) => i.completed).length,
+          },
+        }}
+        onSubmit={handleEditStudyList}
+        onDelete={handleDeleteStudyList}
       />
     </>
   );

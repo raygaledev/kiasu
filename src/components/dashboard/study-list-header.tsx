@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui';
-import { ArrowLeft, Lock, Plus, Share2 } from 'lucide-react';
+import { ArrowLeft, Lock, Pencil, Plus, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -11,6 +11,7 @@ interface StudyListHeaderProps {
   listId: string;
   isPublic: boolean;
   onCreateClick: () => void;
+  onEditClick: () => void;
 }
 
 export function StudyListHeader({
@@ -19,6 +20,7 @@ export function StudyListHeader({
   listId,
   isPublic,
   onCreateClick,
+  onEditClick,
 }: StudyListHeaderProps) {
   const handleShare = () => {
     navigator.clipboard.writeText(`${window.location.origin}/share/${listId}`);
@@ -39,6 +41,12 @@ export function StudyListHeader({
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold">{title}</h1>
+            <button
+              onClick={onEditClick}
+              className="cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
             {!isPublic && (
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                 <Lock className="h-3 w-3" />
