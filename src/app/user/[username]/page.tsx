@@ -54,6 +54,7 @@ export default async function PublicProfilePage({
       isPublic: true,
       position: true,
       _count: { select: { items: true } },
+      copiedFrom: { select: { user: { select: { username: true } } } },
     },
     orderBy: { position: 'asc' },
   });

@@ -3,11 +3,17 @@
 import { useUser } from '@/hooks/use-user';
 import { Button, Container } from '@/components/ui';
 import { UserMenu } from '@/components/auth';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 export function Header() {
   const { user, loading } = useUser();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/60 backdrop-blur-xl">
@@ -40,6 +46,20 @@ export function Header() {
         </div>
 
         <nav className="flex items-center gap-4">
+          {mounted && (
+            <button
+              onClick={() =>
+                setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+              }
+              className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:text-foreground"
+            >
+              {resolvedTheme === 'dark' ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+          )}
           {loading ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
           ) : user ? (
