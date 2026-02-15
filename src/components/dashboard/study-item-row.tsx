@@ -1,6 +1,6 @@
 'use client';
 
-import { EditItemModal } from './edit-item-modal';
+import { StudyItemModal } from './study-item-modal';
 import {
   ChevronDown,
   ChevronUp,
@@ -178,7 +178,7 @@ export function StudyItemRow({
       </div>
 
       {!readOnly && onEdit && (
-        <EditItemModal
+        <StudyItemModal
           open={editOpen}
           onClose={() => setEditOpen(false)}
           item={item}

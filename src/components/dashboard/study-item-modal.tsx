@@ -3,23 +3,25 @@
 import { Button } from '@/components/ui';
 import { studyItemSchema } from '@/lib/validations/schemas';
 import { X } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import type { StudyItem } from '@/types';
 
-interface EditItemModalProps {
+interface StudyItemModalProps {
   open: boolean;
   onClose: () => void;
-  item: StudyItem;
   onSubmit: (formData: FormData) => void;
+  item?: StudyItem;
 }
 
-export function EditItemModal({
+export function StudyItemModal({
   open,
   onClose,
-  item,
   onSubmit,
-}: EditItemModalProps) {
+  item,
+}: StudyItemModalProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const isEdit = !!item;
 
   if (!open) return null;
 
@@ -45,8 +47,11 @@ export function EditItemModal({
 
     setErrors({});
     onSubmit(formData);
+    if (!isEdit) formRef.current?.reset();
     onClose();
   };
+
+  const prefix = isEdit ? 'edit-' : '';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -56,7 +61,9 @@ export function EditItemModal({
       />
       <div className="relative w-full max-w-md rounded-xl border border-border/50 bg-card p-6 shadow-2xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Edit item</h2>
+          <h2 className="text-lg font-semibold">
+            {isEdit ? 'Edit item' : 'Add item'}
+          </h2>
           <button
             onClick={onClose}
             className="cursor-pointer rounded-lg p-1 transition-colors duration-200 hover:bg-muted"
@@ -65,22 +72,23 @@ export function EditItemModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form ref={formRef} onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div className="space-y-4">
             <div>
               <label
-                htmlFor="edit-item-title"
+                htmlFor={`${prefix}item-title`}
                 className="block text-sm font-medium"
               >
                 Title <span className="text-destructive">*</span>
               </label>
               <input
-                id="edit-item-title"
+                id={`${prefix}item-title`}
                 name="title"
                 type="text"
                 autoFocus
-                defaultValue={item.title}
+                defaultValue={item?.title}
                 className={`mt-1 block w-full rounded-xl border ${errors.title ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                placeholder="e.g. Read Chapter 3"
               />
               {errors.title && (
                 <p className="mt-1 text-xs text-destructive">{errors.title}</p>
@@ -88,16 +96,16 @@ export function EditItemModal({
             </div>
             <div>
               <label
-                htmlFor="edit-item-url"
+                htmlFor={`${prefix}item-url`}
                 className="block text-sm font-medium"
               >
                 URL
               </label>
               <input
-                id="edit-item-url"
+                id={`${prefix}item-url`}
                 name="url"
                 type="text"
-                defaultValue={item.url ?? ''}
+                defaultValue={item?.url ?? ''}
                 className={`mt-1 block w-full rounded-xl border ${errors.url ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
                 placeholder="https://..."
               />
@@ -107,16 +115,16 @@ export function EditItemModal({
             </div>
             <div>
               <label
-                htmlFor="edit-item-notes"
+                htmlFor={`${prefix}item-notes`}
                 className="block text-sm font-medium"
               >
                 Notes
               </label>
               <textarea
-                id="edit-item-notes"
+                id={`${prefix}item-notes`}
                 name="notes"
                 rows={3}
-                defaultValue={item.notes ?? ''}
+                defaultValue={item?.notes ?? ''}
                 className={`mt-1 block w-full resize-none rounded-xl border ${errors.notes ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
                 placeholder="Any extra notes..."
               />
@@ -129,7 +137,7 @@ export function EditItemModal({
             <Button type="button" variant="ghost" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Save</Button>
+            <Button type="submit">{isEdit ? 'Save' : 'Add item'}</Button>
           </div>
         </form>
       </div>

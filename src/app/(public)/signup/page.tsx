@@ -1,10 +1,10 @@
-import { AuthForm } from '@/components/auth';
+import { SignupForm } from '@/components/auth';
 import { Container } from '@/components/ui';
 
 export default function SignupPage() {
   return (
     <Container>
-      <AuthForm mode="signup" />
+      <SignupForm />
     </Container>
   );
 }

@@ -2,9 +2,10 @@
 
 import { Card, Button } from '@/components/ui';
 import { chooseUsernameSchema } from '@/lib/validations/schemas';
-import { checkUsernameAvailability, setUsername } from '@/app/auth/actions';
+import { setUsername } from '@/app/auth/actions';
+import { useUsernameAvailability } from '@/hooks/use-username-availability';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 
 export function ChooseUsernameForm() {
@@ -12,41 +13,8 @@ export function ChooseUsernameForm() {
   const [username, setUsernameValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [usernameStatus, setUsernameStatus] = useState<
-    'idle' | 'checking' | 'available' | 'taken'
-  >('idle');
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
-
-  const handleUsernameChange = (value: string) => {
-    setUsernameValue(value);
-    if (value.length >= 3) {
-      setUsernameStatus('checking');
-    } else {
-      setUsernameStatus('idle');
-    }
-  };
-
-  useEffect(() => {
-    if (username.length < 3) return;
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const result = await checkUsernameAvailability(username);
-        if (result.error) {
-          setUsernameStatus('idle');
-          setError(result.error);
-        } else {
-          setUsernameStatus(result.available ? 'available' : 'taken');
-          setError(null);
-        }
-      } catch {
-        setUsernameStatus('idle');
-      }
-    }, 400);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [username]);
+  const { status: usernameStatus, error: usernameError } =
+    useUsernameAvailability(username);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -94,8 +62,8 @@ export function ChooseUsernameForm() {
             id="username"
             type="text"
             value={username}
-            onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`mt-1 block w-full rounded-xl border ${error ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+            onChange={(e) => setUsernameValue(e.target.value)}
+            className={`mt-1 block w-full rounded-xl border ${error || usernameError ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
             placeholder="cool_username"
             autoFocus
           />
@@ -112,7 +80,11 @@ export function ChooseUsernameForm() {
               Username is already taken
             </p>
           )}
-          {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
+          {(error || usernameError) && (
+            <p className="mt-1 text-xs text-destructive">
+              {error || usernameError}
+            </p>
+          )}
         </div>
         <Button type="submit" disabled={loading} className="w-full">
           {loading ? 'Setting username...' : 'Continue'}

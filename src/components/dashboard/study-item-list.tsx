@@ -35,7 +35,7 @@ import { ProgressBar } from '@/components/ui';
 import { StudyListHeader } from './study-list-header';
 import { ItemsEmptyState } from './items-empty-state';
 import { StudyItemRow } from './study-item-row';
-import { CreateItemModal } from './create-item-modal';
+import { StudyItemModal } from './study-item-modal';
 import { EditStudyListModal } from './edit-study-list-modal';
 import type { StudyItem, OptimisticStudyItem, StudyItemAction } from '@/types';
 
@@ -290,7 +290,7 @@ export function StudyItemList({
         )}
       </div>
 
-      <CreateItemModal
+      <StudyItemModal
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreate}
