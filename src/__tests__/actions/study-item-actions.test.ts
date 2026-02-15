@@ -68,6 +68,63 @@ describe('createStudyItem', () => {
     expect(result).toEqual({ error: 'Title is required' });
   });
 
+  it('returns error when url uses javascript: protocol', async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findFirst.mockResolvedValue(TEST_STUDY_LIST);
+
+    const result = await createStudyItem(
+      'list-1',
+      'my-slug',
+      createFormData({ title: 'Item', url: 'javascript:alert(1)' }),
+    );
+    expect(result).toEqual({
+      error: 'URL must start with http:// or https://',
+    });
+  });
+
+  it('returns error when url uses data: protocol', async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findFirst.mockResolvedValue(TEST_STUDY_LIST);
+
+    const result = await createStudyItem(
+      'list-1',
+      'my-slug',
+      createFormData({
+        title: 'Item',
+        url: 'data:text/html,<script>alert(1)</script>',
+      }),
+    );
+    expect(result.error).toBeDefined();
+  });
+
+  it('accepts valid https url', async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findFirst.mockResolvedValue(TEST_STUDY_LIST);
+    mockPrisma.studyItem.findFirst.mockResolvedValue(null);
+    mockPrisma.studyItem.create.mockResolvedValue(TEST_STUDY_ITEM);
+
+    const result = await createStudyItem(
+      'list-1',
+      'my-slug',
+      createFormData({ title: 'Item', url: 'https://example.com' }),
+    );
+    expect(result).toEqual({ success: true });
+  });
+
+  it('accepts valid http url', async () => {
+    mockAuthenticated();
+    mockPrisma.studyList.findFirst.mockResolvedValue(TEST_STUDY_LIST);
+    mockPrisma.studyItem.findFirst.mockResolvedValue(null);
+    mockPrisma.studyItem.create.mockResolvedValue(TEST_STUDY_ITEM);
+
+    const result = await createStudyItem(
+      'list-1',
+      'my-slug',
+      createFormData({ title: 'Item', url: 'http://example.com' }),
+    );
+    expect(result).toEqual({ success: true });
+  });
+
   it('creates item at next position', async () => {
     mockAuthenticated();
     mockPrisma.studyList.findFirst.mockResolvedValue(TEST_STUDY_LIST);
@@ -284,6 +341,20 @@ describe('updateStudyItem', () => {
       createFormData({ title: '' }),
     );
     expect(result).toEqual({ error: 'Title is required' });
+  });
+
+  it('returns error when url uses javascript: protocol', async () => {
+    mockAuthenticated();
+    mockPrisma.studyItem.findUnique.mockResolvedValue(TEST_STUDY_ITEM);
+
+    const result = await updateStudyItem(
+      'item-1',
+      'my-slug',
+      createFormData({ title: 'Updated', url: 'javascript:alert(1)' }),
+    );
+    expect(result).toEqual({
+      error: 'URL must start with http:// or https://',
+    });
   });
 
   it('updates item fields', async () => {

@@ -25,6 +25,10 @@ export const studyItemSchema = z.object({
     .trim()
     .max(2000)
     .url('Must be a valid URL')
+    .refine(
+      (url) => /^https?:\/\//i.test(url),
+      'URL must start with http:// or https://',
+    )
     .optional()
     .or(z.literal('')),
   notes: safeText.pipe(z.string().max(2000)).optional().or(z.literal('')),
