@@ -5,6 +5,7 @@ import { QueryProvider } from '@/providers/query-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { Header } from '@/components/layout';
 import { Footer } from '@/components/layout';
+import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 
 const geistSans = Geist({
@@ -42,6 +43,7 @@ export default function RootLayout({
             <Toaster richColors position="bottom-right" />
           </QueryProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
