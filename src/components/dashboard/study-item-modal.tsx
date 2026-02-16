@@ -1,10 +1,13 @@
 'use client';
 
-import { Button } from '@/components/ui';
+import { Button, Spinner } from '@/components/ui';
 import { studyItemSchema } from '@/lib/validations/schemas';
-import { X } from 'lucide-react';
+import { X, Youtube } from 'lucide-react';
 import { useRef, useState, type FormEvent } from 'react';
 import type { StudyItem } from '@/types';
+
+const YOUTUBE_RE =
+  /^https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)[\w-]+/i;
 
 interface StudyItemModalProps {
   open: boolean;
@@ -20,10 +23,49 @@ export function StudyItemModal({
   item,
 }: StudyItemModalProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [url, setUrl] = useState(item?.url ?? '');
+  const [title, setTitle] = useState(item?.title ?? '');
+  const [ytTitle, setYtTitle] = useState<string | null>(null);
+  const [ytLoading, setYtLoading] = useState(false);
   const isEdit = !!item;
 
   if (!open) return null;
+
+  const fetchYouTubeTitle = (videoUrl: string) => {
+    // Cancel any in-flight request
+    abortRef.current?.abort();
+
+    if (!videoUrl || !YOUTUBE_RE.test(videoUrl)) {
+      setYtTitle(null);
+      setYtLoading(false);
+      return;
+    }
+
+    setYtLoading(true);
+    setYtTitle(null);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    fetch(`/api/youtube-title?url=${encodeURIComponent(videoUrl)}`, {
+      signal: controller.signal,
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.title) setYtTitle(data.title);
+      })
+      .catch(() => {
+        // Aborted or network error — ignore
+      })
+      .finally(() => setYtLoading(false));
+  };
+
+  const handleUrlChange = (value: string) => {
+    setUrl(value);
+    fetchYouTubeTitle(value);
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,17 +89,37 @@ export function StudyItemModal({
 
     setErrors({});
     onSubmit(formData);
-    if (!isEdit) formRef.current?.reset();
+    if (!isEdit) {
+      formRef.current?.reset();
+      setUrl('');
+      setTitle('');
+      setYtTitle(null);
+    }
+    onClose();
+  };
+
+  const handleClose = () => {
+    abortRef.current?.abort();
+    setErrors({});
+    setYtTitle(null);
+    setYtLoading(false);
+    if (!isEdit) {
+      setUrl('');
+      setTitle('');
+    }
     onClose();
   };
 
   const prefix = isEdit ? 'edit-' : '';
 
+  const inputClass = (hasError: boolean) =>
+    `mt-1 block w-full rounded-xl border ${hasError ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={handleClose}
       />
       <div className="relative w-full max-w-md rounded-xl border border-border/50 bg-card p-6 shadow-2xl">
         <div className="flex items-center justify-between">
@@ -65,7 +127,7 @@ export function StudyItemModal({
             {isEdit ? 'Edit item' : 'Add item'}
           </h2>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="cursor-pointer rounded-lg p-1 transition-colors duration-200 hover:bg-muted"
           >
             <X className="h-5 w-5" />
@@ -86,8 +148,9 @@ export function StudyItemModal({
                 name="title"
                 type="text"
                 autoFocus
-                defaultValue={item?.title}
-                className={`mt-1 block w-full rounded-xl border ${errors.title ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className={inputClass(!!errors.title)}
                 placeholder="e.g. Read Chapter 3"
               />
               {errors.title && (
@@ -105,12 +168,34 @@ export function StudyItemModal({
                 id={`${prefix}item-url`}
                 name="url"
                 type="text"
-                defaultValue={item?.url ?? ''}
-                className={`mt-1 block w-full rounded-xl border ${errors.url ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                value={url}
+                onChange={(e) => handleUrlChange(e.target.value)}
+                className={inputClass(!!errors.url)}
                 placeholder="https://..."
               />
               {errors.url && (
                 <p className="mt-1 text-xs text-destructive">{errors.url}</p>
+              )}
+              {ytLoading && (
+                <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Spinner className="h-3 w-3" />
+                  Fetching video title...
+                </p>
+              )}
+              {ytTitle && !ytLoading && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTitle(ytTitle);
+                    setYtTitle(null);
+                  }}
+                  className="mt-1.5 flex cursor-pointer items-start gap-1.5 rounded-lg text-left text-xs text-muted-foreground transition-colors duration-200 hover:text-foreground"
+                >
+                  <Youtube className="h-3.5 w-3.5 shrink-0 self-center text-red-500" />
+                  <span className="line-clamp-2">
+                    Use &ldquo;{ytTitle}&rdquo; as title
+                  </span>
+                </button>
               )}
             </div>
             <div>
@@ -125,7 +210,7 @@ export function StudyItemModal({
                 name="notes"
                 rows={3}
                 defaultValue={item?.notes ?? ''}
-                className={`mt-1 block w-full resize-none rounded-xl border ${errors.notes ? 'border-destructive' : 'border-border/50'} bg-muted/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200`}
+                className={inputClass(!!errors.notes)}
                 placeholder="Any extra notes..."
               />
               {errors.notes && (
@@ -134,7 +219,7 @@ export function StudyItemModal({
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="ghost" onClick={onClose}>
+            <Button type="button" variant="ghost" onClick={handleClose}>
               Cancel
             </Button>
             <Button type="submit">{isEdit ? 'Save' : 'Add item'}</Button>
