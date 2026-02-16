@@ -157,7 +157,7 @@ function getIconForUrl(url: string): React.ReactNode | null {
           (!p.pathPrefix || parsed.pathname.startsWith(p.pathPrefix)),
       ),
     );
-    return match?.icon ?? <Globe className={iconClass} />;
+    return match?.icon ?? <Globe className={`${iconClass} text-primary`} />;
   } catch {
     return null;
   }
