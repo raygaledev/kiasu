@@ -43,6 +43,8 @@ export function createFormData(entries: Record<string, string>): FormData {
 // ── Supabase Mock ───────────────────────────────────────────
 export const mockGetUser = vi.fn();
 export const mockExchangeCodeForSession = vi.fn();
+export const mockUpdateUser = vi.fn();
+export const mockSignInWithPassword = vi.fn();
 
 export const mockStorageUpload = vi.fn();
 export const mockStorageList = vi.fn();
@@ -62,6 +64,9 @@ vi.mock('@/lib/supabase/server', () => ({
       getUser: (...args: unknown[]) => mockGetUser(...args),
       exchangeCodeForSession: (...args: unknown[]) =>
         mockExchangeCodeForSession(...args),
+      updateUser: (...args: unknown[]) => mockUpdateUser(...args),
+      signInWithPassword: (...args: unknown[]) =>
+        mockSignInWithPassword(...args),
     },
     storage: {
       from: (...args: unknown[]) => mockStorageFrom(...args),
@@ -91,6 +96,7 @@ export const mockPrisma = {
   },
   user: {
     findUnique: vi.fn(),
+    findFirst: vi.fn(),
     update: vi.fn(),
   },
   vote: {

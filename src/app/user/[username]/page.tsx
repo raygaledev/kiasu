@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma/client';
 import { notFound } from 'next/navigation';
 import { Container, Avatar } from '@/components/ui';
 import { ProfileAvatar } from '@/components/profile/profile-avatar';
+import { EditProfileButton } from '@/components/profile/edit-profile-button';
 import { ProfileStudyListCard } from '@/components/profile/profile-study-list-card';
 
 export default async function PublicProfilePage({
@@ -31,12 +32,17 @@ export default async function PublicProfilePage({
 
   // Check if the viewer is the profile owner (non-blocking — visitors are fine)
   let isOwner = false;
+  let hasPassword = false;
   try {
     const supabase = await createClient();
     const {
       data: { user: authUser },
     } = await supabase.auth.getUser();
     isOwner = authUser?.id === user.id;
+    if (isOwner && authUser) {
+      const providers: string[] = authUser.app_metadata?.providers ?? [];
+      hasPassword = providers.includes('email');
+    }
   } catch {
     // Not authenticated — visitor
   }
@@ -87,6 +93,15 @@ export default async function PublicProfilePage({
           )}
           {user.name && (
             <p className="mt-1 text-sm text-muted-foreground">{user.name}</p>
+          )}
+          {isOwner && (
+            <div className="mt-3 flex justify-center">
+              <EditProfileButton
+                currentUsername={user.username ?? username}
+                currentEmail={user.email}
+                hasPassword={hasPassword}
+              />
+            </div>
           )}
         </div>
 

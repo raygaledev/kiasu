@@ -58,3 +58,13 @@ export const signupSchema = z.object({
 export const chooseUsernameSchema = z.object({
   username: usernameSchema,
 });
+
+export const updateProfileSchema = z.object({
+  username: usernameSchema,
+  email: z.string().trim().email('Must be a valid email'),
+});
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z.string().min(6, 'Password must be at least 6 characters'),
+});
