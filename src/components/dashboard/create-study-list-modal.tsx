@@ -5,7 +5,7 @@ import { studyListSchema } from '@/lib/validations/schemas';
 import { CategorySelect } from './category-select';
 import { X } from 'lucide-react';
 import { VisibilityToggle } from './visibility-toggle';
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 interface CreateStudyListModalProps {
   open: boolean;
@@ -22,6 +22,15 @@ export function CreateStudyListModal({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isPublic, setIsPublic] = useState(true);
   const [category, setCategory] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, onClose]);
 
   if (!open) return null;
 

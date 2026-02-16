@@ -12,7 +12,7 @@ import {
   changePassword,
 } from '@/app/(app)/profile/actions';
 import { X, User, Mail, Lock, Check, CircleAlert } from 'lucide-react';
-import { useState, useTransition, type FormEvent } from 'react';
+import { useEffect, useState, useTransition, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -53,6 +53,15 @@ export function EditProfileModal({
   const checkUsername = username !== currentUsername ? username : '';
   const { status: usernameStatus, error: usernameError } =
     useUsernameAvailability(checkUsername);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open]);
 
   if (!open) return null;
 

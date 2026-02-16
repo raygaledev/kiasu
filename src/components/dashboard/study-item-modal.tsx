@@ -3,7 +3,7 @@
 import { Button, Spinner } from '@/components/ui';
 import { studyItemSchema } from '@/lib/validations/schemas';
 import { X, Youtube } from 'lucide-react';
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { StudyItem } from '@/types';
 
 const YOUTUBE_RE =
@@ -30,6 +30,15 @@ export function StudyItemModal({
   const [ytTitle, setYtTitle] = useState<string | null>(null);
   const [ytLoading, setYtLoading] = useState(false);
   const isEdit = !!item;
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open]);
 
   if (!open) return null;
 
