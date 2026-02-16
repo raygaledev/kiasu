@@ -157,19 +157,19 @@ export function StudyItemRow({
             <button
               {...attributes}
               {...listeners}
-              className="cursor-grab rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground active:cursor-grabbing"
+              className="cursor-grab rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground active:cursor-grabbing"
             >
               <GripVertical className="h-4 w-4" />
             </button>
             <button
               onClick={() => setEditOpen(true)}
-              className="cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
+              className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
             >
               <Pencil className="h-4 w-4" />
             </button>
             <button
               onClick={onDelete}
-              className="cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-destructive"
+              className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-destructive"
             >
               <Trash2 className="h-4 w-4" />
             </button>

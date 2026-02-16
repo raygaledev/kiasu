@@ -28,7 +28,7 @@ export function Header() {
             className="flex items-center gap-2 transition-opacity duration-200 hover:opacity-80"
           >
             <BookOpen className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">Kiasu</span>
+            <span className="hidden text-2xl font-bold sm:inline">Kiasu</span>
           </Link>
 
           <nav className="flex items-center gap-4">

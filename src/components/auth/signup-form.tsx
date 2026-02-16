@@ -90,7 +90,7 @@ export function SignupForm() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center">
-      <Card className="w-full max-w-md space-y-6 p-8">
+      <Card className="w-full max-w-md space-y-6 p-6 sm:p-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Create your account</h1>
           <p className="mt-2 text-sm text-muted-foreground">

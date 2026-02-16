@@ -43,9 +43,9 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="py-32 sm:py-44">
+      <section className="py-20 sm:py-32 lg:py-44">
         <Container className="text-center">
-          <h1 className="text-5xl font-bold tracking-tight sm:text-7xl">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-7xl">
             Study smarter,{' '}
             <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
               not harder
@@ -55,7 +55,7 @@ export default async function HomePage() {
             Kiasu helps you create, organize, and share study lists so you never
             miss a thing. Stay ahead of the curve.
           </p>
-          <div className="mt-12 flex items-center justify-center gap-4">
+          <div className="mt-12 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
             <Link href="/signup">
               <Button
                 size="lg"

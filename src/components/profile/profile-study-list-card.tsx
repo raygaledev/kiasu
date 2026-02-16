@@ -52,7 +52,7 @@ export function ProfileStudyListCard({
                 title={`Saved from ${list.copiedFrom.user.username}`}
               >
                 <Link2 className="h-3.5 w-3.5" />
-                <span className="pointer-events-none absolute bottom-full left-1/2 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded bg-foreground px-2 py-1 text-[11px] text-background opacity-0 transition-opacity group-hover/tooltip:opacity-100">
+                <span className="pointer-events-none absolute bottom-full left-1/2 mb-1.5 -translate-x-1/2 max-w-[200px] whitespace-normal rounded bg-foreground px-2 py-1 text-[11px] text-background opacity-0 transition-opacity group-hover/tooltip:opacity-100">
                   Saved from {list.copiedFrom.user.username}
                 </span>
               </span>

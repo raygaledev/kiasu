@@ -83,7 +83,7 @@ export function VoteButtons({
         onClick={() => handleVote('UP')}
         disabled={isPending}
         className={cn(
-          'cursor-pointer rounded-full p-0.5 transition-colors hover:text-primary',
+          'cursor-pointer rounded-full p-1.5 transition-colors hover:text-primary',
           optimistic.currentUserVote === 'UP'
             ? 'text-primary'
             : 'text-muted-foreground',
@@ -106,7 +106,7 @@ export function VoteButtons({
         onClick={() => handleVote('DOWN')}
         disabled={isPending}
         className={cn(
-          'cursor-pointer rounded-full p-0.5 transition-colors hover:text-destructive',
+          'cursor-pointer rounded-full p-1.5 transition-colors hover:text-destructive',
           optimistic.currentUserVote === 'DOWN'
             ? 'text-destructive'
             : 'text-muted-foreground',

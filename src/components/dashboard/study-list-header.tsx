@@ -37,7 +37,7 @@ export function StudyListHeader({
         Back to lists
       </Link>
 
-      <div className="mt-4 flex items-start justify-between gap-4">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <h1 className="truncate text-2xl font-bold">{title}</h1>

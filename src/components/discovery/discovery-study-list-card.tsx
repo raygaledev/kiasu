@@ -74,27 +74,27 @@ export function DiscoveryStudyListCard({
         {list.user.username ? (
           <Link
             href={`/user/${list.user.username}`}
-            className="relative z-10 flex items-center gap-2 transition-opacity hover:opacity-80"
+            className="relative z-10 flex min-w-0 items-center gap-2 transition-opacity hover:opacity-80"
           >
             <Avatar
               src={avatarSrc}
               name={username}
               size="sm"
-              className="h-6 w-6 text-[10px]"
+              className="h-6 w-6 shrink-0 text-[10px]"
             />
-            <span className="text-xs font-medium text-muted-foreground">
+            <span className="min-w-0 truncate text-xs font-medium text-muted-foreground">
               {username}
             </span>
           </Link>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             <Avatar
               src={avatarSrc}
               name={username}
               size="sm"
-              className="h-6 w-6 text-[10px]"
+              className="h-6 w-6 shrink-0 text-[10px]"
             />
-            <span className="text-xs font-medium text-muted-foreground">
+            <span className="min-w-0 truncate text-xs font-medium text-muted-foreground">
               {username}
             </span>
           </div>
