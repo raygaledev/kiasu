@@ -3,6 +3,7 @@
 import { useOptimistic, useTransition, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Eye, EyeOff } from 'lucide-react';
 import {
   DndContext,
   DragOverlay,
@@ -87,6 +88,7 @@ export function StudyItemList({
   const [, startTransition] = useTransition();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [hideCompleted, setHideCompleted] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [optimisticItems, dispatch] = useOptimistic(items, itemReducer);
   const router = useRouter();
@@ -229,6 +231,9 @@ export function StudyItemList({
   const completed = optimisticItems.filter((i) => i.completed).length;
   const total = optimisticItems.length;
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const visibleItems = hideCompleted
+    ? optimisticItems.filter((i) => !i.completed)
+    : optimisticItems;
 
   return (
     <>
@@ -242,16 +247,40 @@ export function StudyItemList({
       />
 
       {total > 0 && (
-        <ProgressBar
-          value={progress}
-          label={`${completed} of ${total} completed`}
-          className="mt-6"
-        />
+        <div className="mt-6">
+          <ProgressBar
+            value={progress}
+            label={`${completed} of ${total} completed`}
+          />
+          {completed > 0 && (
+            <button
+              type="button"
+              onClick={() => setHideCompleted((h) => !h)}
+              className="mt-6 flex cursor-pointer items-center gap-1.5 rounded-lg text-xs text-muted-foreground transition-colors duration-200 hover:text-foreground"
+            >
+              {hideCompleted ? (
+                <>
+                  <EyeOff className="h-3.5 w-3.5" />
+                  Show completed
+                </>
+              ) : (
+                <>
+                  <Eye className="h-3.5 w-3.5" />
+                  Hide completed
+                </>
+              )}
+            </button>
+          )}
+        </div>
       )}
 
       <div className="mt-8">
         {optimisticItems.length === 0 ? (
           <ItemsEmptyState onCreateClick={() => setCreateModalOpen(true)} />
+        ) : visibleItems.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            All items completed. Nice work!
+          </p>
         ) : (
           <DndContext
             id="study-item-dnd"
@@ -261,11 +290,11 @@ export function StudyItemList({
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={optimisticItems.map((i) => i.id)}
+              items={visibleItems.map((i) => i.id)}
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-2">
-                {optimisticItems.map((item) => (
+                {visibleItems.map((item) => (
                   <StudyItemRow
                     key={item.id}
                     item={item}
