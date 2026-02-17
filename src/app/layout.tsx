@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import Script from 'next/script';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { PostHogProvider } from '@/providers/posthog-provider';
 import { Header } from '@/components/layout';
 import { Footer } from '@/components/layout';
 import { Analytics } from '@vercel/analytics/react';
@@ -33,14 +34,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          <Toaster richColors position="bottom-right" />
-        </ThemeProvider>
+        <PostHogProvider>
+          <ThemeProvider>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <Toaster richColors position="bottom-right" />
+          </ThemeProvider>
+        </PostHogProvider>
         <Analytics />
         <Script
           async
