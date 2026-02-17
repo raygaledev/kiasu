@@ -7,18 +7,24 @@ import { LogOut, UserCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
-import { getProfilePicture } from '@/app/(app)/profile/actions';
+import { getProfileInfo } from '@/app/(app)/profile/actions';
 
 export function UserMenu() {
   const { user } = useUser();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [dbUsername, setDbUsername] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
-      getProfilePicture().then(setProfilePicture);
+      getProfileInfo().then((info) => {
+        if (info) {
+          setProfilePicture(info.profilePictureUrl);
+          setDbUsername(info.username);
+        }
+      });
     }
   }, [user]);
 
@@ -54,7 +60,7 @@ export function UserMenu() {
   };
 
   const name =
-    user.user_metadata?.username ??
+    dbUsername ??
     user.user_metadata?.full_name ??
     user.user_metadata?.name ??
     user.email;
@@ -72,11 +78,7 @@ export function UserMenu() {
       {open && (
         <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border/50 bg-card p-2 shadow-2xl">
           <div className="mb-1 border-b border-border/50 px-3 py-2">
-            <p className="truncate text-sm font-medium">
-              {user.user_metadata?.username
-                ? user.user_metadata.username
-                : name}
-            </p>
+            <p className="truncate text-sm font-medium">{name}</p>
             <p className="truncate text-xs text-muted-foreground">
               {user.email}
             </p>

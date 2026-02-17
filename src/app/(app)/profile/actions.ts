@@ -8,7 +8,7 @@ import {
   changePasswordSchema,
 } from '@/lib/validations/schemas';
 
-export async function getProfilePicture() {
+export async function getProfileInfo() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -18,10 +18,13 @@ export async function getProfilePicture() {
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { profilePictureUrl: true },
+    select: { profilePictureUrl: true, username: true },
   });
 
-  return dbUser?.profilePictureUrl ?? null;
+  return {
+    profilePictureUrl: dbUser?.profilePictureUrl ?? null,
+    username: dbUser?.username ?? null,
+  };
 }
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
