@@ -1,7 +1,6 @@
 import { Container } from '@/components/ui';
-import { DiscoveryCategoryFilter } from '@/components/discovery/discovery-category-filter';
 import { DiscoveryListGrid } from '@/components/discovery/discovery-list-grid';
-import { fetchDiscoveryLists } from './actions';
+import { fetchDiscoveryLists } from './queries';
 import { Compass } from 'lucide-react';
 import { CATEGORY_VALUES } from '@/lib/categories';
 
@@ -11,14 +10,13 @@ export default async function DiscoveryPage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const { category } = await searchParams;
-  const validCategory =
+  const initialCategory =
     category &&
     CATEGORY_VALUES.includes(category as (typeof CATEGORY_VALUES)[number])
       ? category
-      : undefined;
+      : null;
 
-  const { lists, nextCursor, isAuthenticated, currentUserId } =
-    await fetchDiscoveryLists({ category: validCategory });
+  const { lists, isAuthenticated, currentUserId } = await fetchDiscoveryLists();
 
   return (
     <Container as="section" className="py-8">
@@ -32,13 +30,9 @@ export default async function DiscoveryPage({
         </p>
       </div>
 
-      <DiscoveryCategoryFilter />
-
       <DiscoveryListGrid
-        key={validCategory ?? 'all'}
-        initialLists={lists}
-        initialNextCursor={nextCursor}
-        category={validCategory ?? null}
+        allLists={lists}
+        initialCategory={initialCategory}
         isAuthenticated={isAuthenticated}
         currentUserId={currentUserId}
       />

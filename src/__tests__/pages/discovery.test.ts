@@ -5,7 +5,7 @@ import {
   TEST_USER,
 } from '../helpers/mocks';
 
-import { fetchDiscoveryLists } from '@/app/discovery/actions';
+import { fetchDiscoveryLists } from '@/app/discovery/queries';
 
 /** Returns the first argument of the first findMany call. */
 function getFindManyArgs() {
@@ -41,7 +41,7 @@ describe('fetchDiscoveryLists', () => {
   // ── Query shape ────────────────────────────────────────────
 
   it('fetches only public study lists', async () => {
-    await fetchDiscoveryLists({});
+    await fetchDiscoveryLists();
 
     expect(mockPrisma.studyList.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -51,7 +51,7 @@ describe('fetchDiscoveryLists', () => {
   });
 
   it('excludes users without a username', async () => {
-    await fetchDiscoveryLists({});
+    await fetchDiscoveryLists();
 
     expect(mockPrisma.studyList.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -63,7 +63,7 @@ describe('fetchDiscoveryLists', () => {
   });
 
   it('orders results by createdAt descending', async () => {
-    await fetchDiscoveryLists({});
+    await fetchDiscoveryLists();
 
     expect(mockPrisma.studyList.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -73,7 +73,7 @@ describe('fetchDiscoveryLists', () => {
   });
 
   it('selects list metadata without individual vote objects', async () => {
-    await fetchDiscoveryLists({});
+    await fetchDiscoveryLists();
 
     const args = getFindManyArgs();
     expect(args.select).toMatchObject({
@@ -96,66 +96,26 @@ describe('fetchDiscoveryLists', () => {
     expect(args.select.votes).toBeUndefined();
   });
 
-  // ── Category filtering ─────────────────────────────────────
-
-  it('does not filter by category when none is provided', async () => {
-    await fetchDiscoveryLists({});
+  it('does not filter by category at the DB level', async () => {
+    await fetchDiscoveryLists();
 
     expect(getFindManyArgs().where.category).toBeUndefined();
   });
 
-  it('filters by category when a valid category is provided', async () => {
-    await fetchDiscoveryLists({ category: 'programming' });
-
-    expect(mockPrisma.studyList.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({ category: 'programming' }),
-      }),
-    );
-  });
-
-  it('filters by each valid category value', async () => {
-    const categories = [
-      'programming',
-      'design',
-      'business',
-      'science',
-      'language',
-      'music',
-      'health',
-      'writing',
-      'personal',
-      'other',
+  it('returns all lists so the client can filter by category', async () => {
+    const lists = [
+      makeList({ id: 'prog', category: 'programming' }),
+      makeList({ id: 'design', category: 'design' }),
+      makeList({ id: 'other', category: 'other' }),
     ];
+    mockPrisma.studyList.findMany.mockResolvedValue(lists);
 
-    for (const cat of categories) {
-      vi.clearAllMocks();
-      mockPrisma.studyList.findMany.mockResolvedValue([]);
-      mockPrisma.vote.groupBy.mockResolvedValue([]);
-      mockUnauthenticated();
+    const result = await fetchDiscoveryLists();
 
-      await fetchDiscoveryLists({ category: cat });
-
-      expect(getFindManyArgs().where.category).toBe(cat);
-    }
-  });
-
-  it('ignores an invalid category and shows all lists', async () => {
-    await fetchDiscoveryLists({ category: 'not-a-real-category' });
-
-    expect(getFindManyArgs().where.category).toBeUndefined();
-  });
-
-  it('ignores an empty string category', async () => {
-    await fetchDiscoveryLists({ category: '' });
-
-    expect(getFindManyArgs().where.category).toBeUndefined();
-  });
-
-  it('ignores a category with script injection attempt', async () => {
-    await fetchDiscoveryLists({ category: '<script>alert(1)</script>' });
-
-    expect(getFindManyArgs().where.category).toBeUndefined();
+    expect(result.lists).toHaveLength(3);
+    expect(result.lists.map((l) => l.category)).toEqual(
+      expect.arrayContaining(['programming', 'design', 'other']),
+    );
   });
 
   // ── Vote aggregation ───────────────────────────────────────
@@ -167,7 +127,7 @@ describe('fetchDiscoveryLists', () => {
       { studyListId: 'list-1', type: 'DOWN', _count: 2 },
     ]);
 
-    const result = await fetchDiscoveryLists({});
+    const result = await fetchDiscoveryLists();
 
     expect(mockPrisma.vote.groupBy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -183,16 +143,16 @@ describe('fetchDiscoveryLists', () => {
     mockPrisma.studyList.findMany.mockResolvedValue([makeList()]);
     mockPrisma.vote.groupBy.mockResolvedValue([]);
 
-    const result = await fetchDiscoveryLists({});
+    const result = await fetchDiscoveryLists();
 
     expect(result.lists[0]!.upvotes).toBe(0);
     expect(result.lists[0]!.downvotes).toBe(0);
   });
 
-  // ── Pagination ─────────────────────────────────────────────
+  // ── Returns all lists (no server-side pagination) ──────────
 
-  it('returns at most 12 items per page', async () => {
-    const lists = Array.from({ length: 15 }, (_, i) =>
+  it('returns all lists without pagination', async () => {
+    const lists = Array.from({ length: 25 }, (_, i) =>
       makeList({
         id: `list-${i}`,
         createdAt: new Date(Date.now() - i * 86_400_000),
@@ -200,45 +160,9 @@ describe('fetchDiscoveryLists', () => {
     );
     mockPrisma.studyList.findMany.mockResolvedValue(lists);
 
-    const result = await fetchDiscoveryLists({});
+    const result = await fetchDiscoveryLists();
 
-    expect(result.lists).toHaveLength(12);
-    expect(result.nextCursor).not.toBeNull();
-  });
-
-  it('returns all items when fewer than page size', async () => {
-    mockPrisma.studyList.findMany.mockResolvedValue([
-      makeList({ id: 'a' }),
-      makeList({ id: 'b' }),
-    ]);
-
-    const result = await fetchDiscoveryLists({});
-
-    expect(result.lists).toHaveLength(2);
-    expect(result.nextCursor).toBeNull();
-  });
-
-  it('returns next page when given a cursor', async () => {
-    const lists = Array.from({ length: 15 }, (_, i) =>
-      makeList({
-        id: `list-${i}`,
-        createdAt: new Date(Date.now() - i * 86_400_000),
-      }),
-    );
-    mockPrisma.studyList.findMany.mockResolvedValue(lists);
-
-    const firstPage = await fetchDiscoveryLists({});
-    vi.clearAllMocks();
-    mockPrisma.studyList.findMany.mockResolvedValue(lists);
-    mockPrisma.vote.groupBy.mockResolvedValue([]);
-    mockUnauthenticated();
-
-    const secondPage = await fetchDiscoveryLists({
-      cursor: firstPage.nextCursor!,
-    });
-
-    expect(secondPage.lists).toHaveLength(3);
-    expect(secondPage.nextCursor).toBeNull();
+    expect(result.lists).toHaveLength(25);
   });
 
   // ── Score sorting ──────────────────────────────────────────
@@ -255,7 +179,7 @@ describe('fetchDiscoveryLists', () => {
       { studyListId: 'high', type: 'UP', _count: 10 },
     ]);
 
-    const result = await fetchDiscoveryLists({});
+    const result = await fetchDiscoveryLists();
 
     expect(result.lists[0]!.id).toBe('high');
     expect(result.lists[1]!.id).toBe('low');
@@ -264,7 +188,7 @@ describe('fetchDiscoveryLists', () => {
   // ── Auth state ─────────────────────────────────────────────
 
   it('returns isAuthenticated false when not logged in', async () => {
-    const result = await fetchDiscoveryLists({});
+    const result = await fetchDiscoveryLists();
 
     expect(result.isAuthenticated).toBe(false);
     expect(result.currentUserId).toBeNull();
@@ -277,7 +201,7 @@ describe('fetchDiscoveryLists', () => {
       { studyListId: 'list-1', type: 'UP' },
     ]);
 
-    const result = await fetchDiscoveryLists({});
+    const result = await fetchDiscoveryLists();
 
     expect(result.isAuthenticated).toBe(true);
     expect(result.currentUserId).toBe(TEST_USER.id);
@@ -291,7 +215,7 @@ describe('fetchDiscoveryLists', () => {
     ]);
     mockPrisma.vote.findMany.mockResolvedValue([]);
 
-    const result = await fetchDiscoveryLists({});
+    const result = await fetchDiscoveryLists();
 
     expect(result.lists[0]!.href).toBe('/dashboard/my-list');
   });
@@ -301,7 +225,7 @@ describe('fetchDiscoveryLists', () => {
       makeList({ id: 'list-abc', userId: 'other-user' }),
     ]);
 
-    const result = await fetchDiscoveryLists({});
+    const result = await fetchDiscoveryLists();
 
     expect(result.lists[0]!.href).toBe('/share/list-abc');
   });

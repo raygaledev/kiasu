@@ -1,80 +1,81 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useMemo, useState } from 'react';
 import { DiscoveryStudyListCard } from '@/components/discovery/discovery-study-list-card';
-import {
-  fetchDiscoveryLists,
-  type DiscoveryList,
-} from '@/app/discovery/actions';
-import { Loader2 } from 'lucide-react';
+import { DiscoveryCategoryFilter } from '@/components/discovery/discovery-category-filter';
+import { type DiscoveryList } from '@/app/discovery/queries';
+
+const PAGE_SIZE = 24;
 
 interface DiscoveryListGridProps {
-  initialLists: DiscoveryList[];
-  initialNextCursor: string | null;
-  category: string | null;
+  allLists: DiscoveryList[];
+  initialCategory: string | null;
   isAuthenticated: boolean;
   currentUserId: string | null;
 }
 
 export function DiscoveryListGrid({
-  initialLists,
-  initialNextCursor,
-  category,
+  allLists,
+  initialCategory,
   isAuthenticated,
   currentUserId,
 }: DiscoveryListGridProps) {
-  const [lists, setLists] = useState(initialLists);
-  const [nextCursor, setNextCursor] = useState(initialNextCursor);
-  const [isPending, startTransition] = useTransition();
+  const [category, setCategory] = useState(initialCategory);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  function loadMore() {
-    if (!nextCursor) return;
-    startTransition(async () => {
-      const result = await fetchDiscoveryLists({
-        cursor: nextCursor,
-        category: category ?? undefined,
-      });
-      setLists((prev) => [...prev, ...result.lists]);
-      setNextCursor(result.nextCursor);
-    });
-  }
+  const filtered = useMemo(
+    () =>
+      category
+        ? allLists.filter((list) => list.category === category)
+        : allLists,
+    [allLists, category],
+  );
 
-  if (lists.length === 0) {
-    return (
-      <p className="mt-8 text-sm text-muted-foreground">
-        No study lists found. Try a different category!
-      </p>
-    );
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  function handleCategoryChange(next: string | null) {
+    setCategory(next);
+    setVisibleCount(PAGE_SIZE);
+
+    // Keep URL in sync for bookmarking/sharing (no navigation)
+    const url = new URL(window.location.href);
+    if (next) url.searchParams.set('category', next);
+    else url.searchParams.delete('category');
+    window.history.replaceState({}, '', url);
   }
 
   return (
     <>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {lists.map((list) => (
-          <DiscoveryStudyListCard
-            key={list.id}
-            list={list}
-            isAuthenticated={isAuthenticated}
-            isOwner={currentUserId !== null && list.userId === currentUserId}
-          />
-        ))}
-      </div>
+      <DiscoveryCategoryFilter
+        active={category}
+        onChange={handleCategoryChange}
+      />
 
-      {nextCursor && (
+      {visible.length > 0 ? (
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {visible.map((list) => (
+            <DiscoveryStudyListCard
+              key={list.id}
+              list={list}
+              isAuthenticated={isAuthenticated}
+              isOwner={currentUserId !== null && list.userId === currentUserId}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="mt-8 text-sm text-muted-foreground">
+          No study lists found. Try a different category!
+        </p>
+      )}
+
+      {hasMore && (
         <div className="mt-8 flex justify-center">
           <button
-            onClick={loadMore}
-            disabled={isPending}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-50"
+            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
           >
-            {isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Loading...
-              </>
-            ) : (
-              'Load more'
-            )}
+            Load more
           </button>
         </div>
       )}
