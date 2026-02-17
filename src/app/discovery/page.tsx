@@ -17,7 +17,8 @@ export default async function DiscoveryPage({
       ? category
       : null;
 
-  const { lists, isAuthenticated, currentUserId } = await fetchDiscoveryLists();
+  const { lists, isAuthenticated, currentUserId, isAdmin } =
+    await fetchDiscoveryLists();
 
   return (
     <Container as="section" className="py-8">
@@ -40,6 +41,7 @@ export default async function DiscoveryPage({
         initialCategory={initialCategory}
         isAuthenticated={isAuthenticated}
         currentUserId={currentUserId}
+        isAdmin={isAdmin}
       />
     </Container>
   );

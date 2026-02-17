@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma/client';
 import { generateSlug } from '@/lib/utils';
+import { getAuthUser } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 
 const voteSchema = z.object({
@@ -131,4 +132,33 @@ export async function copyStudyList(studyListId: string) {
   revalidatePath('/dashboard');
   revalidatePath('/discovery');
   return { success: true, slug: newList.slug };
+}
+
+export async function adminHideList(listId: string) {
+  const { isAdmin } = await getAuthUser();
+  if (!isAdmin) {
+    return { error: 'Unauthorized' };
+  }
+
+  await prisma.studyList.update({
+    where: { id: listId },
+    data: { isPublic: false },
+  });
+
+  revalidatePath('/discovery');
+  return { success: true };
+}
+
+export async function adminDeleteList(listId: string) {
+  const { isAdmin } = await getAuthUser();
+  if (!isAdmin) {
+    return { error: 'Unauthorized' };
+  }
+
+  await prisma.studyList.delete({
+    where: { id: listId },
+  });
+
+  revalidatePath('/discovery');
+  return { success: true };
 }

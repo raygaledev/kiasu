@@ -196,6 +196,10 @@ describe('fetchDiscoveryLists', () => {
 
   it('returns isAuthenticated true and fetches user votes when logged in', async () => {
     mockAuthenticated(TEST_USER);
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: TEST_USER.id,
+      role: 'user',
+    });
     mockPrisma.studyList.findMany.mockResolvedValue([makeList()]);
     mockPrisma.vote.findMany.mockResolvedValue([
       { studyListId: 'list-1', type: 'UP' },
@@ -210,6 +214,10 @@ describe('fetchDiscoveryLists', () => {
 
   it('sets href to dashboard for own lists when authenticated', async () => {
     mockAuthenticated(TEST_USER);
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: TEST_USER.id,
+      role: 'user',
+    });
     mockPrisma.studyList.findMany.mockResolvedValue([
       makeList({ userId: TEST_USER.id, slug: 'my-list' }),
     ]);

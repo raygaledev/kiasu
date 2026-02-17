@@ -12,6 +12,7 @@ interface DiscoveryListGridProps {
   initialCategory: string | null;
   isAuthenticated: boolean;
   currentUserId: string | null;
+  isAdmin: boolean;
 }
 
 export function DiscoveryListGrid({
@@ -19,6 +20,7 @@ export function DiscoveryListGrid({
   initialCategory,
   isAuthenticated,
   currentUserId,
+  isAdmin,
 }: DiscoveryListGridProps) {
   const [category, setCategory] = useState(initialCategory);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -60,6 +62,7 @@ export function DiscoveryListGrid({
               list={list}
               isAuthenticated={isAuthenticated}
               isOwner={currentUserId !== null && list.userId === currentUserId}
+              isAdmin={isAdmin}
             />
           ))}
         </div>

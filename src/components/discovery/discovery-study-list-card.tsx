@@ -4,6 +4,7 @@ import { Card, Avatar } from '@/components/ui';
 import { getCategoryIcon, CATEGORIES } from '@/lib/categories';
 import { VoteButtons } from '@/components/discovery/vote-buttons';
 import { CopyStudyListButton } from '@/components/discovery/copy-study-list-button';
+import { AdminActionsMenu } from '@/components/discovery/admin-actions-menu';
 import { BookOpen } from 'lucide-react';
 
 interface DiscoveryStudyListCardProps {
@@ -25,6 +26,7 @@ interface DiscoveryStudyListCardProps {
   };
   isAuthenticated: boolean;
   isOwner: boolean;
+  isAdmin: boolean;
 }
 
 function getCategoryLabel(category: string): string {
@@ -35,6 +37,7 @@ export function DiscoveryStudyListCard({
   list,
   isAuthenticated,
   isOwner,
+  isAdmin,
 }: DiscoveryStudyListCardProps) {
   const avatarSrc = list.user.profilePictureUrl ?? list.user.avatarUrl ?? null;
   const username = list.user.username ?? 'Anonymous';
@@ -43,7 +46,7 @@ export function DiscoveryStudyListCard({
     <Card className="group relative flex h-full flex-col gap-4 p-0 transition-all duration-200 hover:shadow-md hover:shadow-primary/5">
       <Link href={list.href} className="absolute inset-0 z-0" />
 
-      {/* Header: category badge + item count */}
+      {/* Header: category badge + item count + admin menu */}
       <div className="flex items-center justify-between px-5 pt-4">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
           {createElement(getCategoryIcon(list.category), {
@@ -51,10 +54,13 @@ export function DiscoveryStudyListCard({
           })}
           {getCategoryLabel(list.category)}
         </span>
-        <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-          <BookOpen className="h-3.5 w-3.5" />
-          {list._count.items}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+            <BookOpen className="h-3.5 w-3.5" />
+            {list._count.items}
+          </span>
+          {isAdmin && <AdminActionsMenu listId={list.id} />}
+        </div>
       </div>
 
       {/* Body: title + description */}

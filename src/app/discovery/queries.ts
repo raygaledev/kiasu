@@ -1,5 +1,5 @@
-import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma/client';
+import { getAuthUser } from '@/lib/auth';
 
 const MS_PER_DAY = 86_400_000;
 const FRESHNESS_WINDOW_DAYS = 14;
@@ -28,18 +28,11 @@ export async function fetchDiscoveryLists(): Promise<{
   lists: DiscoveryList[];
   isAuthenticated: boolean;
   currentUserId: string | null;
+  isAdmin: boolean;
 }> {
   // Get auth state
-  let userId: string | null = null;
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    userId = user?.id ?? null;
-  } catch {
-    // Not authenticated
-  }
+  const { user, isAdmin } = await getAuthUser();
+  const userId = user?.id ?? null;
 
   // Fetch all public lists (lightweight — no vote objects)
   const lists = await prisma.studyList.findMany({
@@ -127,5 +120,6 @@ export async function fetchDiscoveryLists(): Promise<{
     lists: scored,
     isAuthenticated: userId !== null,
     currentUserId: userId,
+    isAdmin,
   };
 }
