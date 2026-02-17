@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useHideCompleted } from '@/hooks/use-hide-completed';
 import { Eye, EyeOff } from 'lucide-react';
 import type { StudyItem } from '@/types';
 import { StudyItemRow } from '@/components/dashboard/study-item-row';
@@ -42,7 +43,7 @@ export function SharedStudyItemList({
   studyListId,
 }: SharedStudyItemListProps) {
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
-  const [hideCompleted, setHideCompleted] = useState(false);
+  const [hideCompleted, toggleHideCompleted] = useHideCompleted();
 
   useEffect(() => {
     setCheckedIds(readCheckedIds(listId));
@@ -93,7 +94,7 @@ export function SharedStudyItemList({
         {checkedIds.size > 0 && (
           <button
             type="button"
-            onClick={() => setHideCompleted((h) => !h)}
+            onClick={toggleHideCompleted}
             className="mt-6 flex cursor-pointer items-center gap-1.5 rounded-lg text-xs text-muted-foreground transition-colors duration-200 hover:text-foreground"
           >
             {hideCompleted ? (

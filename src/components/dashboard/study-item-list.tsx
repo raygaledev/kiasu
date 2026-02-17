@@ -1,6 +1,7 @@
 'use client';
 
 import { useOptimistic, useTransition, useState } from 'react';
+import { useHideCompleted } from '@/hooks/use-hide-completed';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
@@ -88,7 +89,7 @@ export function StudyItemList({
   const [, startTransition] = useTransition();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [hideCompleted, setHideCompleted] = useState(false);
+  const [hideCompleted, toggleHideCompleted] = useHideCompleted();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [optimisticItems, dispatch] = useOptimistic(items, itemReducer);
   const router = useRouter();
@@ -255,7 +256,7 @@ export function StudyItemList({
           {completed > 0 && (
             <button
               type="button"
-              onClick={() => setHideCompleted((h) => !h)}
+              onClick={toggleHideCompleted}
               className="mt-6 flex cursor-pointer items-center gap-1.5 rounded-lg text-xs text-muted-foreground transition-colors duration-200 hover:text-foreground"
             >
               {hideCompleted ? (
