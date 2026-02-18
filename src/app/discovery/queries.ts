@@ -16,6 +16,7 @@ export type DiscoveryList = {
     username: string | null;
     profilePictureUrl: string | null;
     avatarUrl: string | null;
+    tier: string | null;
   };
   _count: { items: number };
   upvotes: number;
@@ -114,6 +115,7 @@ export async function fetchDiscoveryLists(): Promise<{
           username: list.user.username,
           profilePictureUrl: list.user.profilePictureUrl,
           avatarUrl: list.user.avatarUrl,
+          tier: list.user.tier,
         },
         _count: { items: list._count.items },
         upvotes: counts.up,

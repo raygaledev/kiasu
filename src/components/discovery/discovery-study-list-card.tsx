@@ -5,7 +5,7 @@ import { getCategoryIcon, CATEGORIES } from '@/lib/categories';
 import { VoteButtons } from '@/components/discovery/vote-buttons';
 import { CopyStudyListButton } from '@/components/discovery/copy-study-list-button';
 import { AdminActionsMenu } from '@/components/discovery/admin-actions-menu';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Sparkles } from 'lucide-react';
 
 interface DiscoveryStudyListCardProps {
   list: {
@@ -22,6 +22,7 @@ interface DiscoveryStudyListCardProps {
       username: string | null;
       profilePictureUrl: string | null;
       avatarUrl: string | null;
+      tier: string | null;
     };
   };
   isAuthenticated: boolean;
@@ -88,8 +89,13 @@ export function DiscoveryStudyListCard({
               size="sm"
               className="h-6 w-6 shrink-0 text-[10px]"
             />
-            <span className="min-w-0 truncate text-xs font-medium text-muted-foreground">
-              {username}
+            <span className="flex min-w-0 items-center gap-1">
+              <span className="truncate text-xs font-medium text-muted-foreground">
+                {username}
+              </span>
+              {list.user.tier === 'premium' && (
+                <Sparkles className="h-3 w-3 shrink-0 text-amber-400" />
+              )}
             </span>
           </Link>
         ) : (
@@ -100,8 +106,13 @@ export function DiscoveryStudyListCard({
               size="sm"
               className="h-6 w-6 shrink-0 text-[10px]"
             />
-            <span className="min-w-0 truncate text-xs font-medium text-muted-foreground">
-              {username}
+            <span className="flex min-w-0 items-center gap-1">
+              <span className="truncate text-xs font-medium text-muted-foreground">
+                {username}
+              </span>
+              {list.user.tier === 'premium' && (
+                <Sparkles className="h-3 w-3 shrink-0 text-amber-400" />
+              )}
             </span>
           </div>
         )}
