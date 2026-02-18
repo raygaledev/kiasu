@@ -3,7 +3,8 @@
 import { useUser } from '@/hooks/use-user';
 import { Button, Container } from '@/components/ui';
 import { UserMenu } from '@/components/auth';
-import { BookOpen, Moon, Sun, Zap } from 'lucide-react';
+import { Moon, Sun, Zap } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useSyncExternalStore, useEffect, useState } from 'react';
@@ -37,10 +38,32 @@ export function Header() {
           <div className="flex items-center gap-6">
             <Link
               href={user ? '/dashboard' : '/'}
-              className="flex items-center gap-2 transition-opacity duration-200 hover:opacity-80"
+              className="flex items-center transition-opacity duration-200 hover:opacity-80"
             >
-              <BookOpen className="h-8 w-8 text-primary" />
-              <span className="hidden text-2xl font-bold sm:inline">Kiasu</span>
+              {/* Mobile: icon mark only */}
+              <Image
+                src="/logo_icon.png"
+                alt="Kiasu"
+                width={32}
+                height={32}
+                className="h-8 w-auto sm:hidden"
+              />
+              {/* Desktop: full logo, theme-aware */}
+              {mounted ? (
+                <Image
+                  src={
+                    resolvedTheme === 'dark'
+                      ? '/logo_dark.png'
+                      : '/logo_light.png'
+                  }
+                  alt="Kiasu"
+                  width={120}
+                  height={32}
+                  className="hidden h-8 w-auto sm:block"
+                />
+              ) : (
+                <div className="hidden h-8 w-[120px] sm:block" />
+              )}
             </Link>
 
             <nav className="flex items-center gap-4">

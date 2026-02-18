@@ -1,17 +1,42 @@
+'use client';
+
 import { Container } from '@/components/ui';
-import { BookOpen, Bug } from 'lucide-react';
+import { Bug } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
+import { useSyncExternalStore } from 'react';
+
+const subscribe = () => () => {};
 
 export function Footer() {
+  const { resolvedTheme } = useTheme();
+  const mounted = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
+
   return (
     <footer className="border-t border-border/50 py-8">
       <Container className="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <Link
           href="/"
-          className="flex items-center gap-2 text-muted-foreground transition-colors duration-200 hover:text-foreground"
+          className="flex items-center transition-opacity duration-200 hover:opacity-70"
         >
-          <BookOpen className="h-5 w-5" />
-          <span className="font-semibold">Kiasu</span>
+          {mounted ? (
+            <Image
+              src={
+                resolvedTheme === 'dark' ? '/logo_dark.png' : '/logo_light.png'
+              }
+              alt="Kiasu"
+              width={80}
+              height={20}
+              className="h-5 w-auto"
+            />
+          ) : (
+            <div className="h-5 w-[80px]" />
+          )}
         </Link>
 
         <div className="flex items-center gap-4">
