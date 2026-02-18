@@ -1,7 +1,7 @@
 'use client';
 
 import { useTransition, useState } from 'react';
-import { Copy, CheckCircle, Loader2 } from 'lucide-react';
+import { Bookmark, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { copyStudyList } from '@/app/discovery/actions';
 import { cn } from '@/lib/utils';
@@ -44,7 +44,7 @@ export function CopyStudyListButton({
         ) : copied ? (
           <CheckCircle className="h-4 w-4 text-emerald-500" />
         ) : (
-          <Copy className="h-4 w-4" />
+          <Bookmark className="h-4 w-4" />
         )}
         {copied ? 'Saved!' : 'Save to my Dashboard'}
       </button>
@@ -64,7 +64,7 @@ export function CopyStudyListButton({
       ) : copied ? (
         <CheckCircle className="h-4 w-4 text-emerald-500" />
       ) : (
-        <Copy className="h-4 w-4" />
+        <Bookmark className="h-4 w-4" />
       )}
     </button>
   );
