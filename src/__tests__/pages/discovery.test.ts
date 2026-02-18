@@ -22,7 +22,12 @@ function makeList(overrides: Record<string, unknown> = {}) {
     category: 'other',
     createdAt: new Date(),
     userId: 'someone-else',
-    user: { username: 'testuser', profilePictureUrl: null, avatarUrl: null, tier: 'free' },
+    user: {
+      username: 'testuser',
+      profilePictureUrl: null,
+      avatarUrl: null,
+      tier: 'free',
+    },
     _count: { items: 3, copies: 0 },
     ...overrides,
   };
@@ -236,12 +241,22 @@ describe('fetchDiscoveryLists', () => {
       makeList({
         id: 'free-list',
         createdAt: oldDate,
-        user: { username: 'freeuser', profilePictureUrl: null, avatarUrl: null, tier: 'free' },
+        user: {
+          username: 'freeuser',
+          profilePictureUrl: null,
+          avatarUrl: null,
+          tier: 'free',
+        },
       }),
       makeList({
         id: 'premium-list',
         createdAt: oldDate,
-        user: { username: 'premiumuser', profilePictureUrl: null, avatarUrl: null, tier: 'premium' },
+        user: {
+          username: 'premiumuser',
+          profilePictureUrl: null,
+          avatarUrl: null,
+          tier: 'premium',
+        },
       }),
     ];
     mockPrisma.studyList.findMany.mockResolvedValue(lists);

@@ -11,7 +11,16 @@ import {
   updateEmail,
   changePassword,
 } from '@/app/(app)/profile/actions';
-import { X, User, Mail, Lock, Check, CircleAlert } from 'lucide-react';
+import { getSubscriptionInfo, cancelSubscription } from '@/app/billing/actions';
+import {
+  X,
+  User,
+  Mail,
+  Lock,
+  Check,
+  CircleAlert,
+  Sparkles,
+} from 'lucide-react';
 import {
   useCallback,
   useEffect,
@@ -28,6 +37,7 @@ interface EditProfileModalProps {
   currentUsername: string;
   currentEmail: string;
   hasPassword: boolean;
+  isPremium: boolean;
 }
 
 export function EditProfileModal({
@@ -36,8 +46,17 @@ export function EditProfileModal({
   currentUsername,
   currentEmail,
   hasPassword,
+  isPremium,
 }: EditProfileModalProps) {
   const router = useRouter();
+
+  // Subscription state
+  const [subInfo, setSubInfo] = useState<{
+    cancelAtPeriodEnd: boolean;
+    cancelAt: Date | null;
+    currentPeriodEnd: Date | null;
+  } | null>(null);
+  const [cancelPending, startCancelTransition] = useTransition();
 
   // Profile form state
   const [username, setUsername] = useState(currentUsername);
@@ -61,10 +80,14 @@ export function EditProfileModal({
     useUsernameAvailability(checkUsername);
 
   const handleClose = useCallback(() => {
+    setUsername(currentUsername);
+    setEmail(currentEmail);
+    setCurrentPw('');
+    setNewPw('');
     setProfileErrors({});
     setPasswordErrors({});
     onClose();
-  }, [onClose]);
+  }, [onClose, currentUsername, currentEmail]);
 
   useEffect(() => {
     if (!open) return;
@@ -74,6 +97,11 @@ export function EditProfileModal({
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, handleClose]);
+
+  useEffect(() => {
+    if (!open || !isPremium) return;
+    getSubscriptionInfo().then(setSubInfo);
+  }, [open, isPremium]);
 
   if (!open) return null;
 
@@ -377,6 +405,93 @@ export function EditProfileModal({
                   </Button>
                 </div>
               </form>
+            </>
+          )}
+
+          {/* ── Subscription Section ─────────────────────────── */}
+          {isPremium && (
+            <>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border/50" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">
+                    Subscription
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="rounded-xl border border-amber-400/30 px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-amber-500" />
+                      <span className="text-sm font-medium">Premium</span>
+                    </div>
+                    {subInfo?.cancelAtPeriodEnd ? (
+                      <span className="text-xs text-muted-foreground">
+                        {subInfo.currentPeriodEnd
+                          ? `Ends ${subInfo.currentPeriodEnd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
+                          : 'Cancelling'}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-green-600 dark:text-green-400">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  {!subInfo && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Managed externally — contact support to make changes.
+                    </p>
+                  )}
+                </div>
+
+                {subInfo && !subInfo.cancelAtPeriodEnd && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    disabled={cancelPending}
+                    onClick={() =>
+                      startCancelTransition(async () => {
+                        const res = await cancelSubscription();
+                        if ('error' in res) {
+                          toast.error(res.error);
+                        } else {
+                          setSubInfo((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  cancelAtPeriodEnd: true,
+                                  cancelAt: res.cancelAt,
+                                }
+                              : prev,
+                          );
+                          toast.success('Subscription cancelled');
+                        }
+                      })
+                    }
+                  >
+                    {cancelPending ? (
+                      <span className="flex items-center gap-2">
+                        <Spinner />
+                        Cancelling...
+                      </span>
+                    ) : (
+                      'Cancel subscription'
+                    )}
+                  </Button>
+                )}
+
+                {subInfo?.cancelAtPeriodEnd && (
+                  <p className="text-center text-xs text-muted-foreground">
+                    You&apos;ll keep Premium access until your billing period
+                    ends.
+                  </p>
+                )}
+              </div>
             </>
           )}
         </div>

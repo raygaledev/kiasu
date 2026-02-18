@@ -44,6 +44,7 @@ export default async function PublicProfilePage({
       profilePictureUrl: true,
       createdAt: true,
       tier: true,
+      stripeCustomerId: true,
     },
   });
 
@@ -144,6 +145,7 @@ export default async function PublicProfilePage({
                 currentUsername={user.username ?? username}
                 currentEmail={user.email}
                 hasPassword={hasPassword}
+                isPremium={user.tier === 'premium'}
               />
             </div>
           )}

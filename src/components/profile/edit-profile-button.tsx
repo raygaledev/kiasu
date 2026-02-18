@@ -8,12 +8,14 @@ interface EditProfileButtonProps {
   currentUsername: string;
   currentEmail: string;
   hasPassword: boolean;
+  isPremium: boolean;
 }
 
 export function EditProfileButton({
   currentUsername,
   currentEmail,
   hasPassword,
+  isPremium,
 }: EditProfileButtonProps) {
   const [open, setOpen] = useState(false);
 
@@ -34,6 +36,7 @@ export function EditProfileButton({
         currentUsername={currentUsername}
         currentEmail={currentEmail}
         hasPassword={hasPassword}
+        isPremium={isPremium}
       />
     </>
   );
