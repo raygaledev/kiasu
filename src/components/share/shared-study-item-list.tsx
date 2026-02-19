@@ -114,7 +114,7 @@ export function SharedStudyItemList({
             {hideCompleted ? (
               <>
                 <EyeOff className="h-3.5 w-3.5" />
-                Show completed ({checkedIds.size})
+                Show completed ({checkedIds.size} items)
               </>
             ) : (
               <>
