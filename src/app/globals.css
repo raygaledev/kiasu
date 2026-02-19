@@ -22,6 +22,9 @@
 
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
+
+  --code-bg: rgba(235, 87, 87, 0.08);
+  --code-color: #c0392b;
 }
 
 @theme inline {
@@ -74,6 +77,9 @@
 
     --destructive: #f87171;
     --destructive-foreground: #ffffff;
+
+    --code-bg: rgba(255, 138, 138, 0.12);
+    --code-color: #ff8a8a;
   }
 }
 
@@ -99,6 +105,9 @@
 
   --destructive: #f87171;
   --destructive-foreground: #ffffff;
+
+  --code-bg: rgba(255, 138, 138, 0.12);
+  --code-color: #ff8a8a;
 }
 
 body {
@@ -136,9 +145,10 @@ body {
 .notes-content code {
   font-family: var(--font-mono), monospace;
   font-size: 0.8em;
-  background: hsl(var(--muted));
+  background: var(--code-bg);
+  color: var(--code-color);
   border-radius: 0.25rem;
-  padding: 0.1em 0.3em;
+  padding: 0.1em 0.4em;
 }
 
 /* Prevent iOS Safari auto-zoom on input focus (requires >= 16px) */

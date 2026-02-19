@@ -133,7 +133,7 @@ export function RichTextEditor({
         .prose-editor ul { list-style-type: disc; }
         .prose-editor ol { list-style-type: decimal; }
         .prose-editor li { margin: 0; }
-        .prose-editor code { font-family: var(--font-mono), monospace; font-size: 0.8em; background: hsl(var(--muted)); border-radius: 0.25rem; padding: 0.1em 0.3em; }
+        .prose-editor code { font-family: var(--font-mono), monospace; font-size: 0.8em; background: var(--code-bg); color: var(--code-color); border-radius: 0.25rem; padding: 0.1em 0.4em; }
         .prose-editor .tiptap p.is-editor-empty:first-child::before {
           content: attr(data-placeholder);
           float: left;
