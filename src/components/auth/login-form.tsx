@@ -130,6 +130,14 @@ export function LoginForm() {
             {errors.password && (
               <p className="mt-1 text-xs text-destructive">{errors.password}</p>
             )}
+            <div className="mt-1 text-right">
+              <Link
+                href="/forgot-password"
+                className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
           </div>
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? 'Signing in...' : 'Sign in'}
